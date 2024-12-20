@@ -1,0 +1,229 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.header-box {
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.board-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.tool-wrapper {
+  margin-bottom: 1rem;
+}
+
+.tool-box {
+  gap: 0.5rem;
+}
+
+.checkbox {
+  display: none;
+}
+.check-all {
+  display: none;
+}
+.show-checkbox .checkbox {
+  display: table-cell;
+}
+.show-checkbox .check-all {
+  display: inline-block;
+}
+
+.tool-button.active {
+  background-color: #4caf50;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.tool-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.main-box {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+thead {
+  background-color: #f8f9fa;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: center;
+}
+
+.table-title {
+  text-align: left;
+}
+
+.td-title {
+  text-align: left;
+  color: #333;
+}
+
+.th-num,
+.td-num {
+  width: 8%;
+}
+.th-member,
+.td-name {
+  width: 12%;
+}
+.th-date,
+.td-date {
+  width: 12%;
+}
+.th-view,
+.td-view {
+  width: 8%;
+}
+.th-comment,
+.td-comment {
+  width: 8%;
+}
+.th-title,
+.td-title {
+  width: 52%;
+}
+
+.page-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.page-num {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.page-num:hover {
+  background-color: #e9ecef;
+}
+
+.prev-button-box,
+.next-button-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prev-button,
+.next-button {
+  text-decoration: none;
+  color: #666;
+  padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .th-member,
+  .td-name,
+  .th-view,
+  .td-view,
+  .th-comment,
+  .td-comment {
+    display: none;
+  }
+
+  .th-title,
+  .td-title {
+    width: 68%;
+  }
+  .th-num,
+  .td-num {
+    width: 12%;
+  }
+  .th-date,
+  .td-date {
+    width: 20%;
+  }
+}
+
+.list-box tr:hover {
+  background-color: #f8f9fa;
+}
+
+.page-num.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.right-tool {
+  float: right;
+}
+
+.check.active {
+  background-color: rgb(44, 157, 255);
+  color: #fff;
+}
+.delete:hover {
+  background-color: rgb(201, 0, 0);
+  color: #fff;
+}
+.write:hover {
+  background-color: rgb(44, 157, 255);
+  color: #fff;
+}

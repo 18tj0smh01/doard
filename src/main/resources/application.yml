@@ -1,0 +1,29 @@
+servlet:
+  multipart:
+    enabled: true
+    file-size-threshold: 2MB
+    max-request-size: 40MB
+    max-file-size: 40MB
+logging:
+  level:
+    org.mybatis: DEBUG
+    org.springframework.jdbc: DEBUG
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+  port: 10000
+mybatis:
+  type-aliases-package: com.example.board.demo.domain
+  mapper-locations: classpath:mapper/*.xml
+
+spring:
+  datasource:
+     driver-class-name: org.mariadb.jdbc.Driver
+     url: jdbc:mariadb://localhost:3306/board_test
+     username: root
+     password: 1234
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
