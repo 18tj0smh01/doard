@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
@@ -106,13 +107,13 @@
         function fetchPosts() {
             $.ajax({
                 url: '/post/list',
-                method: 'POST',
-                contentType: 'application/json',
-                success: function (data) {
-                    renderPosts(data);
+                type: 'GET',
+                success: function (posts) {
+                    console.log(posts);
+                    renderPosts(posts);
                 },
-                error: function () {
-                    alert('게시글을 가져오는 데 실패했습니다.');
+                error: function (xhr, status, error) {
+                    console.error("에러 발생:", status, error);
                 }
             });
         }
@@ -122,23 +123,61 @@
             $postList.empty();
 
             posts.forEach(function (post) {
-                const postRow = `
+                const row = `
                 <tr>
-                    <td class="td-num">${post.id}</td>
-                    <td class="td-title">
-                        <a draggable="false" href="/post/detail?postId=${post.id}">
-                            ${post.postTitle}
-                        </a>
-                    </td>
-                    <td class="td-name">${post.memberName}</td>
-                    <td class="td-date">${post.postDate}</td>
-                    <td class="td-view">${post.viewCount}</td>
-                    <td class="td-comment">${post.commentCount}</td>
+                    <td>${post.id}</td>
+                    <td><a href="/post/detail?postId=${post.id}">${post.postTitle}</a></td>
+                    <td>${post.memberName}</td>
+                    <td>${post.postDate}</td>
+                    <td>${post.viewCount}</td>
                 </tr>`;
-                $postList.append(postRow);
+                $postList.append(row);
             });
         }
     });
+
+
+    <%--$(document).ready(function () {--%>
+    <%--    fetchPosts();--%>
+    <%--});--%>
+
+    <%--function fetchPosts() {--%>
+    <%--    $.ajax({--%>
+    <%--        url: '/post/list',--%>
+    <%--        method: 'POST',--%>
+    <%--        contentType: 'application/json',--%>
+    <%--        success: function (posts) {--%>
+    <%--            console.log(posts);--%>
+    <%--            renderPosts(posts);--%>
+
+    <%--        },--%>
+    <%--        error: function () {--%>
+    <%--            alert('게시글을 가져오는 데 실패했습니다.');--%>
+    <%--        }--%>
+    <%--    });--%>
+    <%--}--%>
+
+    <%--function renderPosts(posts) {--%>
+
+    <%--}        const $postList = $('#post-list');--%>
+    <%--$postList.empty();--%>
+
+    <%--posts.forEach(function (post) {--%>
+    <%--    const postRow = `--%>
+    <%--            <tr>--%>
+    <%--                <td class="td-num">${post.id}</td>--%>
+    <%--                <td class="td-title">--%>
+    <%--                    <a draggable="false" href="/post/detail?postId=${post.id}">--%>
+    <%--                        ${post.postTitle}--%>
+    <%--                    </a>--%>
+    <%--                </td>--%>
+    <%--                <td class="td-name">${post.memberName}</td>--%>
+    <%--                <td class="td-date">${post.postDate}</td>--%>
+    <%--                <td class="td-view">${post.viewCount}</td>--%>
+    <%--                <td class="td-comment">${post.commentCount}</td>--%>
+    <%--            </tr>`;--%>
+    <%--    $postList.append(postRow);--%>
+    <%--});--%>
 </script>
 </body>
 </html>

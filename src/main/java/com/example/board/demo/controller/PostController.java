@@ -7,11 +7,14 @@ import com.example.board.demo.service.MemberService;
 import com.example.board.demo.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import com.example.board.demo.domain.ResultVO;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,74 +31,43 @@ public class PostController {
         this.postService = postService;
     }
 
-
-//    @ResponseBody
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public ResultVO getBoardList(@RequestParam(defaultValue = "10") int limit,
-//                                 @RequestParam(defaultValue = "0") int offset,
-//                                 Model model,
-//                                 HttpSession session) {
-//
-//        Long memberId = (Long) session.getAttribute("id");
-//
-//        // 결과 값을 담을 ResultVO를 선언한 생성자를 통해서 만드는데 기본값은 success는 false, result는 null로 세팅
-//        ResultVO result = new ResultVO(false, null);
-//
-//            result.setResult(postService.getPosts(limit, offset));
-//            result.setSuccess(true);
-//
-//
-//        return result;
-//
-//    }
-
-
-
-//    @GetMapping("/list")
-//    @PostMapping("/list")
-    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public String getAllPosts(@RequestParam(defaultValue = "10") int limit,
-                               @RequestParam(defaultValue = "0") int offset,
-                               Model model,
-                               HttpSession session) {
-
-        Long memberId = (Long) session.getAttribute("id");
-        if (memberId == null) {
-            return "redirect:/login";
-        }
-
-        List<PostVO> postList = postService.getPosts(limit, offset);
-        postList.forEach(post -> System.out.println(post));
-        postList.forEach(System.out::println);
-
-        MemberVO memberVO = new MemberVO();
-        if (memberId != null) {
-            memberVO = memberService.findById(memberId).orElse(new MemberVO());
-        }
-
-        model.addAttribute("memberVO", memberVO);
-        model.addAttribute("postList", postList);
-
-        return "list";
-    }
-
-//    @PostMapping("/list")
-//    @GetMapping("/list")
 //@RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
 //@ResponseBody
-//public List<PostVO> getAllPosts(@RequestParam(defaultValue = "10") int limit,
-//                                @RequestParam(defaultValue = "0") int offset,
-//                                HttpSession session) {
+//public ModelAndView getAllPosts(HttpSession session) {
+//
+//    ModelAndView redirectView = new ModelAndView("redirect:/login");
+//
+//    // 세션에서 사용자 ID 가져오기
 //    Long memberId = (Long) session.getAttribute("id");
 //    if (memberId == null) {
-//        return new ArrayList<>();
+//        return redirectView; // 세션이 없으면 로그인 페이지로
 //    }
 //
-//    List<PostVO> postList = postService.getPosts(limit, offset);
-//    postList.forEach(post -> System.out.println(post));
-//    postList.forEach(System.out::println);
-//    return postList;
+//    // 게시글 리스트 가져오기
+//    List<PostVO> postList = postService.getAllPosts();
+//    postList.forEach(System.out::println); // 로그 출력 (디버깅용)
+//    MemberVO memberVO = new MemberVO();
+//
+//    // 메인 페이지로 이동하기 위한 ModelAndView
+//    ModelAndView listView = new ModelAndView("list");
+//
+//    listView.addObject("memberVO", memberVO); // 회원 정보
+//    listView.addObject("postList", postList); // 게시글 리스트
+//
+//    return listView;
 //}
+@RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+@ResponseBody
+public List<PostVO> getAllPosts(HttpSession session) {
 
+    Long memberId = (Long) session.getAttribute("id");
+    if (memberId == null) {
+        return new ArrayList<>();
+    }
+
+    List<PostVO> postList = postService.getAllPosts();
+
+    return postList;
+}
 
 }
