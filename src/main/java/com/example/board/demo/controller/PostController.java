@@ -31,6 +31,13 @@ public class PostController {
         this.postService = postService;
     }
 
+    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView list() {
+        List<PostVO> list =postMapper.selectPostList(10, 0);
+       return new ModelAndView("list","postList",list);
+    }
+
+
 //@RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
 //@ResponseBody
 //public ModelAndView getAllPosts(HttpSession session) {
@@ -56,18 +63,21 @@ public class PostController {
 //
 //    return listView;
 //}
-@RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-@ResponseBody
-public List<PostVO> getAllPosts(HttpSession session) {
 
-    Long memberId = (Long) session.getAttribute("id");
-    if (memberId == null) {
-        return new ArrayList<>();
-    }
 
-    List<PostVO> postList = postService.getAllPosts();
+//    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+//    @ResponseBody
+//    public List<PostVO> getAllPosts(HttpSession session) {
+//
+//        Long memberId = (Long) session.getAttribute("id");
+//        if (memberId == null) {
+//            return new ArrayList<>();
+//        }
+//
+//        List<PostVO> postList = postService.getAllPosts();
+//
+//        return postList;
+//    }
 
-    return postList;
-}
 
 }

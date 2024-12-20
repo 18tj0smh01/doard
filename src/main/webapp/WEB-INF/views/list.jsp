@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
@@ -54,23 +55,23 @@
         </tr>
         </thead>
         <tbody class="list-box" id="post-list">
-<%--        <c:forEach var="post" items="${postList}">--%>
-<%--            <tr>--%>
-<%--                <td class="checkbox">--%>
-<%--                    <input type="checkbox" name="post" class="post-checkbox" data-post-id="${post.id}" />--%>
-<%--                </td>--%>
-<%--                <td class="td-num">${post.id}</td>--%>
-<%--                <td class="td-title">--%>
-<%--                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?postId=${post.id}">--%>
-<%--                            ${post.postTitle}--%>
-<%--                    </a>--%>
-<%--                </td>--%>
-<%--                <td class="td-name">${post.memberName}</td>--%>
-<%--                <td class="td-date"><fmt:formatDate value="${post.postDate}" pattern="yyyy-MM-dd" /></td>--%>
-<%--                <td class="td-view">${post.viewCount}</td>--%>
-<%--                <td class="td-comment">${post.commentCount}</td>--%>
-<%--            </tr>--%>
-<%--        </c:forEach>--%>
+        <c:forEach var="post" items="${postList}">
+            <tr>
+                <td class="checkbox">
+                    <input type="checkbox" name="post" class="post-checkbox" data-post-id="${post.id}" />
+                </td>
+                <td class="td-num">${post.id}</td>
+                <td class="td-title">
+                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?postId=${post.id}">
+                            ${post.postTitle}
+                    </a>
+                </td>
+                <td class="td-name">${post.memberName}</td>
+                <td class="td-date"><fmt:formatDate value="${post.postDate}" pattern="yyyy-MM-dd" /></td>
+                <td class="td-view">${post.viewCount}</td>
+                <td class="td-comment">${post.commentCount}</td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 
@@ -101,82 +102,46 @@
 </script>
 
 <script>
-    $(document).ready(function () {
-        fetchPosts();
-
-        function fetchPosts() {
-            $.ajax({
-                url: '/post/list',
-                type: 'GET',
-                success: function (posts) {
-                    console.log(posts);
-                    renderPosts(posts);
-                },
-                error: function (xhr, status, error) {
-                    console.error("에러 발생:", status, error);
-                }
-            });
-        }
-
-        function renderPosts(posts) {
-            const $postList = $('#post-list');
-            $postList.empty();
-
-            posts.forEach(function (post) {
-                const row = `
-                <tr>
-                    <td>${post.id}</td>
-                    <td><a href="/post/detail?postId=${post.id}">${post.postTitle}</a></td>
-                    <td>${post.memberName}</td>
-                    <td>${post.postDate}</td>
-                    <td>${post.viewCount}</td>
-                </tr>`;
-                $postList.append(row);
-            });
-        }
-    });
-
-
     <%--$(document).ready(function () {--%>
     <%--    fetchPosts();--%>
-    <%--});--%>
 
-    <%--function fetchPosts() {--%>
-    <%--    $.ajax({--%>
-    <%--        url: '/post/list',--%>
-    <%--        method: 'POST',--%>
-    <%--        contentType: 'application/json',--%>
-    <%--        success: function (posts) {--%>
-    <%--            console.log(posts);--%>
-    <%--            renderPosts(posts);--%>
+    <%--    function fetchPosts() {--%>
+    <%--        $.ajax({--%>
+    <%--            url: '/post/list',--%>
+    <%--            type: 'GET',--%>
+    <%--            dataType: 'json',--%>
+    <%--            success: function (data) {--%>
+    <%--                renderPosts(data);--%>
+    <%--            },--%>
+    <%--            error: function (xhr, status, error) {--%>
+    <%--                console.error("데이터를 불러오는 중 에러 발생:", error);--%>
+    <%--                alert("데이터를 가져오는데 실패했습니다.");--%>
+    <%--            }--%>
+    <%--        });--%>
+    <%--    }--%>
 
-    <%--        },--%>
-    <%--        error: function () {--%>
-    <%--            alert('게시글을 가져오는 데 실패했습니다.');--%>
+    <%--    function renderPosts(posts) {--%>
+    <%--        const $tableBody = $('#postTable tbody');--%>
+    <%--        $tableBody.empty();--%>
+
+    <%--        if (posts.length === 0) {--%>
+    <%--            $tableBody.append('<tr><td colspan="5">게시글이 없습니다.</td></tr>');--%>
+    <%--            return;--%>
     <%--        }--%>
-    <%--    });--%>
-    <%--}--%>
 
-    <%--function renderPosts(posts) {--%>
-
-    <%--}        const $postList = $('#post-list');--%>
-    <%--$postList.empty();--%>
-
-    <%--posts.forEach(function (post) {--%>
-    <%--    const postRow = `--%>
-    <%--            <tr>--%>
-    <%--                <td class="td-num">${post.id}</td>--%>
-    <%--                <td class="td-title">--%>
-    <%--                    <a draggable="false" href="/post/detail?postId=${post.id}">--%>
-    <%--                        ${post.postTitle}--%>
-    <%--                    </a>--%>
-    <%--                </td>--%>
-    <%--                <td class="td-name">${post.memberName}</td>--%>
-    <%--                <td class="td-date">${post.postDate}</td>--%>
-    <%--                <td class="td-view">${post.viewCount}</td>--%>
-    <%--                <td class="td-comment">${post.commentCount}</td>--%>
-    <%--            </tr>`;--%>
-    <%--    $postList.append(postRow);--%>
+    <%--        posts.forEach(function (post, index) {--%>
+    <%--            const row = `--%>
+    <%--                    <tr>--%>
+    <%--                        <td>${index + 1}</td>--%>
+    <%--                        <td><a href="/post/detail?postId=${post.id}">${post.postTitle}</a></td>--%>
+    <%--                        <td>${post.memberName}</td>--%>
+    <%--                        <td>${post.postDate}</td>--%>
+    <%--                        <td>${post.viewCount}</td>--%>
+    <%--                    </tr>--%>
+    <%--                `;--%>
+    <%--            $tableBody.append(row);--%>
+    <%--        });--%>
+    <%--    }--%>
     <%--});--%>
 </script>
 </body>
