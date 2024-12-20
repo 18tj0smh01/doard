@@ -2,11 +2,15 @@ package com.example.board.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
+@Data
+@Component
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostVO {
     @JsonProperty("id")
