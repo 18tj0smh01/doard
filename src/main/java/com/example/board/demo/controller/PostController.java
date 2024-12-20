@@ -32,9 +32,18 @@ public class PostController {
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView list() {
+    public ModelAndView list(HttpSession session) {
+
+        ModelAndView redirectView = new ModelAndView("redirect:/login");
+        Long memberId = (Long) session.getAttribute("id");
+
+    if (memberId == null) {
+        return redirectView; // 세션이 없으면 로그인 페이지로
+    }
+
         List<PostVO> list =postMapper.selectPostList(10, 0);
        return new ModelAndView("list","postList",list);
+
     }
 
 
