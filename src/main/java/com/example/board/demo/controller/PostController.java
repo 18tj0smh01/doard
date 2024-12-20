@@ -29,55 +29,55 @@ public class PostController {
     }
 
 
-    @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResultVO getBoardList(@RequestParam(defaultValue = "10") int limit,
-                                 @RequestParam(defaultValue = "0") int offset,
-                                 Model model,
-                                 HttpSession session) {
-
-        Long memberId = (Long) session.getAttribute("id");
-
-        // 결과 값을 담을 ResultVO를 선언한 생성자를 통해서 만드는데 기본값은 success는 false, result는 null로 세팅
-        ResultVO result = new ResultVO(false, null);
-
-            result.setResult(postService.getPosts(limit, offset));
-            result.setSuccess(true);
-
-
-        return result;
-
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/list", method = RequestMethod.GET)
+//    public ResultVO getBoardList(@RequestParam(defaultValue = "10") int limit,
+//                                 @RequestParam(defaultValue = "0") int offset,
+//                                 Model model,
+//                                 HttpSession session) {
+//
+//        Long memberId = (Long) session.getAttribute("id");
+//
+//        // 결과 값을 담을 ResultVO를 선언한 생성자를 통해서 만드는데 기본값은 success는 false, result는 null로 세팅
+//        ResultVO result = new ResultVO(false, null);
+//
+//            result.setResult(postService.getPosts(limit, offset));
+//            result.setSuccess(true);
+//
+//
+//        return result;
+//
+//    }
 
 
 
 //    @GetMapping("/list")
 //    @PostMapping("/list")
-//    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-//    public String getAllPosts(@RequestParam(defaultValue = "10") int limit,
-//                               @RequestParam(defaultValue = "0") int offset,
-//                               Model model,
-//                               HttpSession session) {
-//
-//        Long memberId = (Long) session.getAttribute("id");
-//        if (memberId == null) {
-//            return "redirect:/login";
-//        }
-//
-//        List<PostVO> postList = postService.getPosts(limit, offset);
-//        postList.forEach(post -> System.out.println(post));
-//        postList.forEach(System.out::println);
-//
-//        MemberVO memberVO = new MemberVO();
-//        if (memberId != null) {
-//            memberVO = memberService.findById(memberId).orElse(new MemberVO());
-//        }
-//
-//        model.addAttribute("memberVO", memberVO);
-//        model.addAttribute("postList", postList);
-//
-//        return "list";
-//    }
+    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+    public String getAllPosts(@RequestParam(defaultValue = "10") int limit,
+                               @RequestParam(defaultValue = "0") int offset,
+                               Model model,
+                               HttpSession session) {
+
+        Long memberId = (Long) session.getAttribute("id");
+        if (memberId == null) {
+            return "redirect:/login";
+        }
+
+        List<PostVO> postList = postService.getPosts(limit, offset);
+        postList.forEach(post -> System.out.println(post));
+        postList.forEach(System.out::println);
+
+        MemberVO memberVO = new MemberVO();
+        if (memberId != null) {
+            memberVO = memberService.findById(memberId).orElse(new MemberVO());
+        }
+
+        model.addAttribute("memberVO", memberVO);
+        model.addAttribute("postList", postList);
+
+        return "list";
+    }
 
 //    @PostMapping("/list")
 //    @GetMapping("/list")
