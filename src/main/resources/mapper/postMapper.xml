@@ -95,7 +95,7 @@
         DELETE FROM POST WHERE ID = #{id}
     </delete>
 
-    <select id="getCommentsByPostId" parameterType="long" resultType="com.example.board.demo.domain.CommentVO">
+    <select id="getCommentsByPostId" parameterType="Long" resultType="com.example.board.demo.domain.CommentVO">
         SELECT *
         FROM COMMENT
         WHERE post_id = #{postId}

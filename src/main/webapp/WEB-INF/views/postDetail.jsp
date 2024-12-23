@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -68,14 +69,13 @@
 <body>
 <div class="header-box">
     <div class="header-content">
-        <a href="${pageContext.request.contextPath}/main">테스트 게시판</a>
+        <a href="${pageContext.request.contextPath}/list">테스트 게시판</a>
     </div>
 </div>
 
 <!-- 메인 컨텐츠 -->
 <div class="main-container">
     <div class="main-box">
-        <!-- 게시글 -->
         <div class="post-box">
             <div class="post-title">${post.postTitle}</div>
             <div class="info-box">
@@ -84,9 +84,9 @@
                     <span class="view-count">조회 <span>${post.viewCount}</span></span>
                 </div>
                 <section class="order">
-                    <a href="${pageContext.request.contextPath}/main">목록으로</a>
-                    <a href="${pageContext.request.contextPath}/post/edit?postId=${post.id}">수정</a>
-                    <a href="${pageContext.request.contextPath}/post/deletePost?id=${post.id}" class="delete">삭제</a>
+                    <a href="<c:url value='/post/edit/${post.postId}' />">수정</a>
+                    <a href="<c:url value='/post/edit/${post.postId}' />">수정</a>
+                    <a href="<c:url value='/post/deletePost/${post.postId}' />" class="delete">삭제</a>
                 </section>
                 <div class="post-info">
                     <span class="post-date">${post.postDate}</span>
@@ -100,57 +100,44 @@
         <!-- 댓글 -->
         <div class="comment-section">
             <div class="content-footer">
-                <div class="comment-count-box">댓글 수: ${post.commentCount}</div>
+                <div class="comment-count-box">댓글 수: <span>${post.commentCount}</span></div>
             </div>
 
             <!-- 댓글 목록 -->
-
-            <div id="comment-list" class="comment-container">
-                <table class="comment-info">
-                    <tr>
-                        <th>댓글번호</th>
-                        <th class="comment-userName">작성자</th>
-                        <th>내용</th>
-                    </tr>
-                    <c:forEach items="${commentList}" var="comment">
-                        <tr>
-                            <td>${comment.id}</td>
-                            <td class="comment-userName">${comment.memberName}</td>
-                            <td class="comment-content">${comment.commentContent}</td>
-                        </tr>
+            <div class="comment-container">
+                <c:forEach var="comment" items="${comments}">
+                    <div class="comment-info">
+                        <div class="comment-userName">${comment.memberName}</div>
+                        <div class="comment-content">${comment.commentContent}</div>
                         <section class="order">
                             <a class="update">수정</a>
-                            <a href="${pageContext.request.contextPath}/post/deleteComment?id=${comment.id}&postId=${post.id}" class="delete">삭제</a>
+                            <a href="">?id=${comment.id}&postId=${post.postId}" class="delete">삭제</a>
                         </section>
                         <div class="comment-footer">
                             <div class="comment-date">${comment.commentDate}</div>
                             <button type="button" class="reply-button">답글 쓰기</button>
                         </div>
-                        <!-- 대댓글 입력 -->
+
+                        <!-- 대댓글 입력-->
                         <div class="reply-box">
-                            <td class="comment-userName">${comment.memberName}</td>
-                            <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요" ${comment.commentContent}></textarea>
+                            <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요">${commentDTO.commentContent}</textarea>
                             <div class="comment-footer">
                                 <button type="button" class="comment-cancel">취소</button>
                                 <button type="submit" class="comment-submit">등록</button>
                             </div>
                         </div>
-                    </c:forEach>
-                </table>
-            </div>
+                    </div>
+                </c:forEach>
             </div>
 
             <!-- 댓글 입력 -->
-            <form action="${pageContext.request.contextPath}/comment/upload" method="post">
-                <div class="comment-box">
-                    <div class="comment-user">${memberName}</div>
-                    <textarea name="comment" class="comment-input" placeholder="댓글을 입력하세요"></textarea>
-                    <div class="comment-footer">
-                        <button type="submit" class="comment-submit">등록</button>
-                    </div>
+            <div class="comment-box">
+                <div class="comment-user">${memberName}</div>
+                <textarea id="commentContent" class="comment-input" placeholder="댓글을 입력하세요"></textarea>
+                <div class="comment-footer">
+                    <button id="commentSubmit" class="comment-submit">등록</button>
                 </div>
-            </form>
-        </div>
+            </div>
 
         <!-- 게시글 목록 -->
         <div class="post-list-box">
@@ -190,54 +177,59 @@
     });
 </script>
 <script>
-    const updateFn = () => {
-        const id = '${post.id}';
-        location.href = "/post/update?id=" + id;
-    }
-    const deleteFn = () => {
-        const id = '${post.id}';
-        location.href = "/post/delete?id=" + id;
+    document.getElementById("commentSubmit").addEventListener("click", function () {
+    const postId = "[[${post.id}]]";
+    const commentContent = document.getElementById("commentContent").value;
+
+    if (!commentContent.trim()) {
+    alert("댓글 내용을 입력하세요.");
+    return;
     }
 
-    const commentWrite = () => {
-        const writer = document.getElementById("commentWriter").value;
-        const contents = document.getElementById("commentContents").value;
-        const post = '${post.id}';
-        $.ajax({
-            type: "post",
-            url: "/comment/save",
-            data: {
-                commentWriter: writer,
-                commentContents: contents,
-                postId: post
-            },
-            dataType: "json",
-            success: function(commentList) {
-                console.log("작성성공");
-                console.log(commentList);
-                let output = "<table>";
-                output += "<tr><th>댓글번호</th>";
-                output += "<th>작성자</th>";
-                output += "<th>내용</th>";
-                output += "<th>작성시간</th></tr>";
-                for(let i in commentList){
-                    output += "<tr>";
-                    output += "<td>"+commentList[i].id+"</td>";
-                    output += "<td>"+commentList[i].commentWriter+"</td>";
-                    output += "<td>"+commentList[i].commentContents+"</td>";
-                    output += "<td>"+commentList[i].commentCreatedTime+"</td>";
-                    output += "</tr>";
-                }
-                output += "</table>";
-                document.getElementById('comment-list').innerHTML = output;
-                document.getElementById('commentWriter').value='';
-                document.getElementById('commentContents').value='';
-            },
-            error: function() {
-                console.log("실패");
-            }
-        });
+    fetch('/comment/uploadComment', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+    postId: postId,
+    commentContent: commentContent,
+    }),
+    })
+    .then((response) => {
+    if (!response.ok) {
+    throw new Error("댓글 등록에 실패했습니다.");
     }
+    return response.json(); // 서버에서 반환된 댓글 리스트
+    })
+    .then((data) => {
+    updateComments(data); // 댓글 목록 업데이트
+    document.getElementById("commentContent").value = ""; // 입력창 초기화
+    })
+    .catch((error) => {
+    console.error(error);
+    alert("오류가 발생했습니다. 다시 시도하세요.");
+    });
+    });
+
+    function updateComments(comments) {
+    const container = document.getElementById("comment-container");
+    container.innerHTML = ""; // 기존 댓글 초기화
+
+    comments.forEach((comment) => {
+    const commentItem = document.createElement("div");
+    commentItem.className = "comment-item";
+    commentItem.innerHTML = `
+    <div class="comment-userName">${comment.memberName}</div>
+    <div class="comment-content">${comment.commentContent}</div>
+    <div class="comment-footer">
+    <div class="comment-date">${comment.commentDate}</div>
+    </div>
+    `;
+    container.appendChild(commentItem);
+    });
+    }
+
 </script>
 </body>
 </html>

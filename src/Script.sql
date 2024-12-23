@@ -44,7 +44,7 @@ select * from POST;
 
 -- 글 리스트 출력
 SELECT
-    p.ID AS long,
+    p.ID AS id,
     p.POST_TITLE AS postTitle,
     p.MEMBER_ID AS memberId,
     p.POST_DATE AS postDate,

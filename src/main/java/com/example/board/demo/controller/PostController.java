@@ -6,6 +6,7 @@ import com.example.board.demo.domain.PostVO;
 import com.example.board.demo.mapper.PostMapper;
 import com.example.board.demo.service.MemberService;
 import com.example.board.demo.service.PostService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/post")
@@ -68,18 +70,30 @@ public class PostController {
 
     // 게시글 상세보기
     @GetMapping("/detail")
-    public String detail(HttpSession session, Model model, Long id, boolean notModify) {
+    public ModelAndView detail(HttpSession session, Model model, Long id, boolean notModify) {
+
         PostVO postVO = postService.getPostById(id);
         List<CommentVO> comments = postService.selectPostComment(id);
 
-        if (notModify) {
-            session.removeAttribute("modifyReview");
-        }
+//        if (notModify) {
+//            session.removeAttribute("modifyComment");
+//        }
+        PostVO post = postService.getPostById(id);
+        List<CommentVO> commentList = postService.selectPostComment(id);
+        List<PostVO> postList = postService.getAllPosts(10, 0);
 
-        model.addAttribute("post", postVO);
-        model.addAttribute("comments", comments);
+        model.addAttribute("post", post);
+        model.addAttribute("comments", commentList);
+        model.addAttribute("postList", postList);
+        model.addAttribute("commentVO", new CommentVO());
 
-        return "/postDetail";
+
+
+        ModelAndView detailView = new ModelAndView("postDetail");
+//        detailView.addObject("postVO", new PostVO());
+//        model.addAttribute("comments", new CommentVO());
+
+        return detailView;
     }
 
     // 게시글 삭제 기능 (본인만 삭제 가능)
@@ -98,7 +112,6 @@ public class PostController {
         return "redirect:list";
     }
 
-    // 업데이트 폼으로 가기 (본인만 수정 가능)
     @GetMapping("/updateform")
     public String updateform(HttpSession session, Model model, Long id, String writer) {
 
@@ -120,7 +133,7 @@ public class PostController {
         return "/edit";
     }
 
-    // 업데이트 기능(파일도 업데이트 가능)
+    // 업데이트 기능
     @PostMapping("/update")
     public String update(PostVO postVO){
 

@@ -6,10 +6,13 @@ import com.example.board.demo.service.MemberService;
 import com.example.board.demo.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/comment")
@@ -25,10 +28,13 @@ public class CommentController {
     }
 
     @PostMapping("/uploadComment")
+    @ResponseBody
     public List<CommentVO> uploadComment(
-            @RequestParam Long postId,
-            @RequestParam String commentContent,
+            @RequestBody Map<String, Object> requestData,
             HttpSession session) {
+
+        Long postId = Long.valueOf(requestData.get("postId").toString());
+        String commentContent = requestData.get("commentContent").toString();
 
         Long memberId = (Long) session.getAttribute("id");
         if (memberId == null) {
