@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.board.demo.mapper.CommentMapper">
+<!--댓글 작성-->
+    <insert id="commentUpload">
+        INSERT INTO COMMENT (COMMENT_CONTENT, POST_ID, MEMBER_ID)
+        VALUES(#{commentContent}, #{postId}, #{memberId})
+    </insert>
+
+<!--대댓글 작성-->
+    <insert id="replyUpload">
+        INSERT INTO COMMENT (COMMENT_CONTENT, COMMENT_DEPTH, PARENT_COMMENT_ID, POST_ID, MEMBER_ID)
+        VALUES(#{commentContent}, 1, 1, #{postId}, #{memberId})
+    </insert>
+<!--댓 or 대댓글 삭제-->
+    <delete id="deleteComment">
+        delete from comment where ID = #{id}
+    </delete>
+
+<!--댓 or 대댓글 수정 (임시)-->
+    <update id="commentEdit">
+        UPDATE comment
+        SET
+        comment_CONTENT = #{commentContent},
+        comment_UPDATED_TIME = CURRENT_TIMESTAMP
+        WHERE ID = #{id}
+    </update>
+
+    <select id="selectAll" resultType="commentVO">
+        SELECT RE.ID, RE.COMMENT_CONTENT, RE.COMMENT_DATE, RE.COMMENT_UPDATED_TIME,
+        RE.COMMENT_DEPTH, RE.PARENT_COMMENT_ID,
+        RE.MEMBER_ID, M.MEMBER_NAME, RE.POST_ID
+        FROM COMMENT RE
+        JOIN TBL_MEMBER M ON M.ID = RE.MEMBER_ID
+        WHERE RE.POST_ID = #{id}
+        ORDER BY RE.PARENT_COMMENT_ID ASC, RE.COMMENT_DEPTH ASC, RE.ID ASC
+        LIMIT #{pagination.rowCount} OFFSET (#{pagination.page} - 1) * #{pagination.rowCount}
+    </select>
+
+    
+<!--특정 게시글 전체 댓글 조회-->
+    <select id="selectPostComment" resultType="commentVO">
+        SELECT
+        m.MEMBER_NAME,
+        c.COMMENT_CONTENT,
+        c.COMMENT_UPDATED_TIME
+        FROM COMMENT c
+        JOIN TBL_MEMBER m ON c.MEMBER_ID = m.ID
+        WHERE c.POST_ID = #{id}
+    </select>
+
+<!--게시글 내 댓글 전체 삭제-->
+    <delete id="deleteAll">
+        DELETE FROM COMMENT WHERE POST_ID = #{postId}
+    </delete>
+
+    <select id="findCommentById" parameterType="Long" resultType="commentVO">
+        SELECT ID, POST_ID AS postId, MEMBER_ID AS memberId, COMMENT_CONTENT AS commentContent, comment_date AS commentDate
+        FROM comment
+        WHERE id = #{id}
+    </select>
+</mapper>

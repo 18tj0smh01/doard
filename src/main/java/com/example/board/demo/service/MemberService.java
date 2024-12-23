@@ -21,7 +21,7 @@ public class MemberService {
         this.memberMapper = memberMapper;
     }
 
-    public Optional<MemberVO> findById(long id) {
+    public Optional<MemberVO> findById(Long id) {
         return Optional.ofNullable(memberMapper.findById(id));
     }
 

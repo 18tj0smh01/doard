@@ -15,15 +15,15 @@ import java.util.Date;
 @Component
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostVO {
-//    private long id;
+//    private Long id;
 //    private String postTitle;
 //    private String postContent;
 //    private String postDate;
 //    private String postUpdateTime;
-//    private long memberId;
+//    private Long memberId;
 //    private String memberName;
-//    private long viewCount;
-//    private long commentCount;
+//    private Long viewCount;
+//    private Long commentCount;
 
     @JsonProperty("id")
     private Long id;
