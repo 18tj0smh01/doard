@@ -33,12 +33,22 @@ public class CommentController {
             @RequestBody Map<String, Object> requestData,
             HttpSession session) {
 
-        Long postId = Long.valueOf(requestData.get("postId").toString());
+        Object postIdObject = requestData.get("postId");
+        Long postId;
+        if (postIdObject instanceof String) {
+            postId = Long.valueOf((String) postIdObject);
+        } else if (postIdObject instanceof Number) {
+            postId = ((Number) postIdObject).longValue();
+        } else {
+            throw new IllegalArgumentException("postId 형식이 올바르지 않습니다.");
+        }
+
         String commentContent = requestData.get("commentContent").toString();
 
+        // ID 확인
         Long memberId = (Long) session.getAttribute("id");
         if (memberId == null) {
-            throw new RuntimeException("로그인이 필요합니다.");
+            throw new IllegalStateException("로그인이 필요합니다.");
         }
 
         CommentVO commentVO = new CommentVO();
@@ -48,7 +58,7 @@ public class CommentController {
 
         postService.uploadComment(commentVO);
 
-        // 해당 게시글에 작성된 최신 댓글 리스트 반환
+        // 해당 게시글의 댓글 리스트 반환
         return postService.selectPostComment(postId);
     }
 }

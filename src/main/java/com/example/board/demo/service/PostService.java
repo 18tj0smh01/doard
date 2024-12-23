@@ -29,15 +29,28 @@ public class PostService {
     // 게시글 생성
     @Transactional
     public PostVO createPost(PostVO postVO) {
-        postMapper.postUpload(postVO); // 업로드
-        return postVO; // 성공 시 저장된 객체 반환
+        int rowsAffected = postMapper.postUpload(postVO); // 게시글 삽입
+        if (rowsAffected == 0) {
+            throw new RuntimeException("게시글 생성 실패");
+        }
+        return postVO;
     }
 
     // 게시글 수정
     @Transactional
     public PostVO editPost(PostVO postVO) {
-        postMapper.postEdit(postVO); // 수정
-        return postVO; // 성공 시 수정된 객체 반환
+        int updatedRows = postMapper.postEdit(postVO);
+
+        if (updatedRows == 0) {
+            throw new RuntimeException("게시글 수정에 실패했습니다. ID: " + postVO.getId());
+        }
+
+        PostVO updatedPost = postMapper.selectPost(postVO.getId());
+        if (updatedPost == null) {
+            throw new RuntimeException("수정 후 게시글을 조회하지 못했습니다. ID: " + postVO.getId());
+        }
+
+        return updatedPost;
     }
 
     // 게시글 삭제
@@ -59,13 +72,23 @@ public class PostService {
     }
     
     // 댓글 추가
-    public void uploadComment(CommentVO commentVO) {
-        commentMapper.commentUpload(commentVO);
+    @Transactional
+    public CommentVO uploadComment(CommentVO commentVO) {
+        int rowsAffected = commentMapper.commentUpload(commentVO); // 게시글 삽입
+        if (rowsAffected == 0) {
+            throw new RuntimeException("댓글 생성 실패");
+        }
+        return commentVO;
     }
 
     // 대댓글 추가
-    public void uploadReply(CommentVO commentVO) {
-        commentMapper.replyUpload(commentVO);
+    @Transactional
+    public CommentVO uploadReply(CommentVO commentVO) {
+        int rowsAffected = commentMapper.replyUpload(commentVO); // 게시글 삽입
+        if (rowsAffected == 0) {
+            throw new RuntimeException("대댓글 생성 실패");
+        }
+        return commentVO;
     }
 
     // 댓글 삭제
@@ -79,10 +102,24 @@ public class PostService {
     }
 
     // 댓글 수정
-    public void editComment(CommentVO commentVO){
-        commentMapper.commentEdit(commentVO);
-    }
+    @Transactional
+    public CommentVO editComment(CommentVO commentVO){
+        
+        int updatedRows =commentMapper.commentEdit(commentVO);
 
+        if (updatedRows == 0) {
+            throw new RuntimeException("댓글 수정에 실패했습니다. ID: " + commentVO.getId());
+        }
+
+        CommentVO editComment = (CommentVO) commentMapper.selectPostComment(commentVO.getId());
+        if (editComment == null) {
+            throw new RuntimeException("수정 후 댓글을 조회하지 못했습니다. ID: " + commentVO.getId());
+        }
+
+        return editComment;
+    }
+    
+    
     // 게시글에 대한 댓글 리스트 조회
     public List<CommentVO> selectPostComment(Long postId){
         return commentMapper.selectPostComment(postId);

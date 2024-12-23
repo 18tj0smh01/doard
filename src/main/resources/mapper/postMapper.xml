@@ -14,7 +14,7 @@
     </resultMap>
 
     <!-- 게시글 작성 -->
-    <insert id="postUpload" useGeneratedKeys="true" keyProperty="id">
+    <insert id="postUpload" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO POST (POST_TITLE, POST_CONTENT, MEMBER_ID)
         VALUES (#{postTitle}, #{postContent}, #{memberId})
     </insert>
@@ -68,6 +68,7 @@
     <!-- 게시글 조회 -->
     <select id="selectPost" resultType="postVO">
         SELECT
+        p.ID AS id,
         p.POST_TITLE AS postTitle,
         p.MEMBER_ID AS memberId,
         m.MEMBER_NAME AS memberName,

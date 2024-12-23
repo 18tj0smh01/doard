@@ -60,6 +60,19 @@ ORDER BY p.POST_DATE DESC
 LIMIT 10 OFFSET 0;
 
 
+        SELECT
+        p.ID AS id,
+        p.POST_TITLE AS postTitle,
+        p.MEMBER_ID AS memberId,
+        m.MEMBER_NAME AS memberName,
+        p.POST_DATE AS postDate,
+        p.POST_UPDATED_TIME AS postUpdatedTime,
+        p.VIEWCOUNT AS viewCount,
+        p.POST_CONTENT AS postContent
+        FROM POST p
+        LEFT JOIN TBL_MEMBER m ON p.MEMBER_ID = m.ID
+        WHERE p.ID = 1;
+
 
 -- 글 내용 보기
 SELECT 

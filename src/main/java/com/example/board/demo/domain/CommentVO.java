@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentVO {
-    private Long commentId;
+    private Long id;
     private String commentContent;
     private String commentDate;
     private String commentUpdateTime;
@@ -22,8 +22,8 @@ public class CommentVO {
     private Long parentCommentId;        // 부모 댓글 ID (NULL이면 일반 댓글)
     private int commentDepth;            // 댓글 깊이 (0: 댓글, 1 이상: 대댓글)
 
-    public Long getcommentId() {
-        return commentId;
+    public Long getId() {
+        return id;
     }
 
     public String getCommentContent() {
@@ -54,8 +54,8 @@ public class CommentVO {
         return commentDepth;
     }
 
-    public void setcommentId(Long commentId) {
-        this.commentId = commentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setCommentContent(String commentContent) {

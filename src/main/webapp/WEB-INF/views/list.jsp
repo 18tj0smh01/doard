@@ -21,7 +21,7 @@
 <!-- 게시판 이름 -->
 <div class="header-box overlay">
     <div class="header-content">
-        <a href="${pageContext.request.contextPath}/main">테스트 게시판</a>
+        <a href="${pageContext.request.contextPath}/login">테스트 게시판</a>
     </div>
 </div>
 
@@ -62,7 +62,7 @@
                 </td>
                 <td class="td-num">${post.id}</td>
                 <td class="td-title">
-                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?postId=${post.id}">
+                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?id=${post.id}">
                             ${post.postTitle}
                     </a>
                 </td>
@@ -103,47 +103,6 @@
 
 <script>
 
-    <%--$(document).ready(function () {--%>
-    <%--    fetchPosts();--%>
-
-    <%--    function fetchPosts() {--%>
-    <%--        $.ajax({--%>
-    <%--            url: '/post/list',--%>
-    <%--            type: 'GET',--%>
-    <%--            dataType: 'json',--%>
-    <%--            success: function (data) {--%>
-    <%--                renderPosts(data);--%>
-    <%--            },--%>
-    <%--            error: function (xhr, status, error) {--%>
-    <%--                console.error("데이터를 불러오는 중 에러 발생:", error);--%>
-    <%--                alert("데이터를 가져오는데 실패했습니다.");--%>
-    <%--            }--%>
-    <%--        });--%>
-    <%--    }--%>
-
-    <%--    function renderPosts(posts) {--%>
-    <%--        const $tableBody = $('#postTable tbody');--%>
-    <%--        $tableBody.empty();--%>
-
-    <%--        if (posts.length === 0) {--%>
-    <%--            $tableBody.append('<tr><td colspan="5">게시글이 없습니다.</td></tr>');--%>
-    <%--            return;--%>
-    <%--        }--%>
-
-    <%--        posts.forEach(function (post, index) {--%>
-    <%--            const row = `--%>
-    <%--                    <tr>--%>
-    <%--                        <td>${index + 1}</td>--%>
-    <%--                        <td><a href="/post/detail?postId=${post.id}">${post.postTitle}</a></td>--%>
-    <%--                        <td>${post.memberName}</td>--%>
-    <%--                        <td>${post.postDate}</td>--%>
-    <%--                        <td>${post.viewCount}</td>--%>
-    <%--                    </tr>--%>
-    <%--                `;--%>
-    <%--            $tableBody.append(row);--%>
-    <%--        });--%>
-    <%--    }--%>
-    <%--});--%>
 </script>
 </body>
 </html>

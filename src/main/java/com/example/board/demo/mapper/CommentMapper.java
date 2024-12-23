@@ -9,15 +9,15 @@ import java.util.List;
 @Mapper
 public interface CommentMapper {
 
-    void commentUpload(CommentVO commentVO);
+    int commentUpload(CommentVO commentVO);
 
-    void replyUpload(CommentVO commentVO);
+    int replyUpload(CommentVO commentVO);
 
-    void deleteComment(Long commentId);
+    int deleteComment(Long commentId);
 
-    void deleteAll(Long postId);
+    int deleteAll(Long postId);
 
-    void commentEdit(CommentVO commentVO);
+    int commentEdit(CommentVO commentVO);
 
     List<CommentVO> selectPostComment(Long postId);
 

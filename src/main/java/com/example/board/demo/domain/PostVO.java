@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
 @Setter
 @Data
 @Component
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostVO {
 //    private Long id;

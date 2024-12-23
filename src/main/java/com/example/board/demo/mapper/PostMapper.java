@@ -10,11 +10,11 @@ import java.util.List;
 public interface PostMapper {
     List<PostVO> selectPostList(int limit, int offset);
 
-    PostVO postUpload(PostVO postVO);
+    int postUpload(PostVO postVO);
 
     void deletePost(Long id);
 
-    PostVO postEdit(PostVO postVO);
+    int postEdit(PostVO postVO);
 
     PostVO selectPost(Long id);
 }
