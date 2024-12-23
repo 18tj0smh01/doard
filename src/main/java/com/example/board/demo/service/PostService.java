@@ -1,6 +1,7 @@
 package com.example.board.demo.service;
 
 import com.example.board.demo.domain.CommentVO;
+import com.example.board.demo.domain.Pagination;
 import com.example.board.demo.domain.PostVO;
 import com.example.board.demo.mapper.CommentMapper;
 import com.example.board.demo.mapper.PostMapper;
@@ -22,8 +23,8 @@ public class PostService {
 
     // 모든 게시글 조회 (기본 limit과 offset)
     @Transactional(readOnly = true)
-    public List<PostVO> getAllPosts(int limit, int offset) {
-        return postMapper.selectPostList(limit, offset);
+    public List<PostVO> getAllPosts(Pagination pagination) {
+        return postMapper.selectPostList(pagination);
     }
 
     public int getPostListCnt() {
@@ -71,8 +72,8 @@ public class PostService {
 
     // 제한된 개수의 게시글 목록 조회
     @Transactional(readOnly = true)
-    public List<PostVO> getPosts(int limit, int offset) {
-        return postMapper.selectPostList(limit, offset);
+    public List<PostVO> getPosts(Pagination pagination) {
+        return postMapper.selectPostList(pagination);
     }
     
     // 댓글 추가

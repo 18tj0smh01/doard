@@ -34,7 +34,7 @@ public class PostController {
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, HttpSession session, Model model) {
+    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, HttpSession session, Model model,Pagination pagination) {
 
         ModelAndView redirectView = new ModelAndView("redirect:/login");
         Long memberId = (Long) session.getAttribute("id");
@@ -45,10 +45,9 @@ public class PostController {
         return redirectView; // 세션이 없으면 로그인 페이지로
     }
 
-        List<PostVO> list = postMapper.selectPostList(10, 0);
+        List<PostVO> list = postMapper.selectPostList(pagination);
 
         //페이징[s]
-        Pagination pagination = new Pagination();
         pagination.setCurrentPageNo(postVO.getPageIndex());
         pagination.setRecordCountPerPage(postVO.getPageUnit());
         pagination.setPageSize(postVO.getPageSize());
@@ -76,6 +75,7 @@ public class PostController {
     }
 
     // 게시글 쓰는 창으로 가기
+
     @GetMapping("/write")
     public ModelAndView gotoWrite(Model model) {
         ModelAndView redirectView = new ModelAndView("redirect:/login");
@@ -106,8 +106,9 @@ public class PostController {
     }
 
     // 게시글 상세보기
-    @RequestMapping("detail")
-    public ModelAndView gotoDetail(@ModelAttribute("postVO") PostVO postVO, CommentVO commentVO, HttpSession session, Model model,@RequestParam("id") Long id) {
+    @RequestMapping(value="/list", method=RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView gotoDetail(@ModelAttribute("postVO") PostVO postVO, CommentVO commentVO, HttpSession session, Model model,@RequestParam("id") Long id, Pagination pagination) {
         ModelAndView redirectView = new ModelAndView("redirect:/login");
         Long memberId = (Long) session.getAttribute("id");
 
@@ -117,7 +118,7 @@ public class PostController {
 
         List<CommentVO> commentList = postService.selectPostComment(id);
         PostVO post = postService.getPostById(id);
-        List<PostVO> postList = postService.getAllPosts(10, 0);
+        List<PostVO> postList = postService.getAllPosts(pagination);
 
         //댓글 페이징[s]
         Pagination ComPagination = new Pagination();
@@ -225,6 +226,7 @@ public class PostController {
 
         return redirectListView;
     }
+
 
 
 }

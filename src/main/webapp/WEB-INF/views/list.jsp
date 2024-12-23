@@ -102,25 +102,25 @@
 
 <div class="board-list-paging fr">
     <ol class="pagination" id="pagination">
-        <c:if test="${searchVO.prev}">
+        <c:if test="${postVO.prev}">
             <li class="prev_end">
                 <a href="javascript:void(0);" onclick="fn_go_page(1); return false;" ></a>
             </li>
             <li class="prev">
-                <a href="javascript:void(0);" onclick="fn_go_page(${searchVO.startDate - 1}); return false;" ></a>
+                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.startDate - 1}); return false;" ></a>
             </li>
         </c:if>
-        <c:forEach var="num" begin="${searchVO.startDate}" end="${searchVO.endDate}">
+        <c:forEach var="num" begin="${postVO.startDate}" end="${postVO.endDate}">
             <li>
                 <a href="javascript:void(0);" onclick="fn_go_page(${num}); return false;" class="num ${pageIndex eq num ? 'on':'' }" title="${num}">${num}</a>
             </li>
         </c:forEach>
-        <c:if test="${searchVO.next}">
+        <c:if test="${postVO.next}">
             <li class="next">
-                <a href="javascript:void(0);" onclick="fn_go_page(${searchVO.endDate + 1}); return false;" ></a>
+                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.endDate + 1}); return false;" ></a>
             </li>
             <li class="next_end">
-                <a href="javascript:void(0);" onclick="fn_go_page(${searchVO.realEnd }); return false;"></a>
+                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.realEnd }); return false;"></a>
             </li>
         </c:if>
     </ol>
@@ -150,11 +150,12 @@
 <script type="text/javascript">
     function fn_go_page(pageNo) {
 
+        var path = "${pageContext.request.contextPath}
         var submitObj = new Object();
 
         submitObj.pageIndex = pageNo;
         $.ajax({
-            url: path + "/gnb01/lnb06/snb03/areaListAjax.do",
+            url: path + "/post/list",
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify(submitObj),

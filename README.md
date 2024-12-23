@@ -25,3 +25,9 @@
     
     쿼리 스트링
         https://chobopark.tistory.com/171
+
+    JSON 으로 게시판 관리 (RESTful 게시판)
+        https://colinch4.github.io/2023-09-15/13-07-54-455247-%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C-json-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EA%B4%80%EB%A6%AC-%EA%B8%B0%EB%8A%A5-%EC%83%9D%EC%84%B1%ED%95%98%EA%B8%B0/
+        https://sap518.tistory.com/160
+        https://ttl-blog.tistory.com/267
+        https://earth-95.tistory.com/49
