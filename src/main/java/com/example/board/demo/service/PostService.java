@@ -26,6 +26,10 @@ public class PostService {
         return postMapper.selectPostList(limit, offset);
     }
 
+    public int getPostListCnt() {
+        return postMapper.getPostListCnt();
+    }
+
     // 게시글 생성
     @Transactional
     public PostVO createPost(PostVO postVO) {
@@ -125,6 +129,10 @@ public class PostService {
         return commentMapper.selectPostComment(postId);
     }
 
+    public int getComListCnt() {
+        return commentMapper.getComListCnt();
+    }
+
     public List<CommentVO> getList(Long commentId) {
         return commentMapper.selectAll(commentId);
     }
@@ -132,4 +140,5 @@ public class PostService {
     public CommentVO getCommentById(Long id) {
         return commentMapper.findCommentById(id);
     }
+
 }

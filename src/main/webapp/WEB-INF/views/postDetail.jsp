@@ -95,6 +95,32 @@
                 </div>
             </div>
 
+<%--  페이지--%>
+            <div class="col-sm-12 col-md-7" style="text-align:right">
+                <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                    <ul class="pagination">
+
+                        <c:if test="${postVO.prev}">
+                            <li class="paginate_button page-item previous" id="dataTable_previous">
+                                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.startDate - 1}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                            </li>
+                        </c:if>
+
+                        <c:forEach var="num" begin="${postVO.startDate}" end="${postVO.endDate}">
+                            <li class="paginate_button page-item">
+                                <a href="javascript:void(0);" onclick="fn_go_page(${num}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">${num}</a>
+                            </li>
+                        </c:forEach>
+
+                        <c:if test="${postVO.next}">
+                            <li class="paginate_button page-item next" id="dataTable_next">
+                                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.endDate + 1}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Next</a>
+                            </li>
+                        </c:if>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <!-- 게시글 목록 -->
         <div class="post-list-box">
             <div class="other-post">최신 글</div>
@@ -115,7 +141,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
     </div>
 </div>
 

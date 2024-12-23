@@ -16,7 +16,7 @@ import java.util.Date;
 @Component
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostVO {
+public class PostVO extends PageVO {
 //    private Long id;
 //    private String postTitle;
 //    private String postContent;

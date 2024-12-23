@@ -2,6 +2,8 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
@@ -76,9 +78,54 @@
     </table>
 
     <!-- 페이징 -->
-<%--    <jsp:include page="/WEB-INF/views/utils/pagination.jsp">--%>
-<%--        <jsp:param name="pagination" value="${pagination}" />--%>
-<%--    </jsp:include>--%>
+    <tbody class="listData">
+    <c:set var="ii" value="${resultCnt - (searchVO.pageIndex -1) * paginationInfo.recordCountPerPage }" />
+    <c:forEach var="result" items="${resultList}" varStatus="sts">
+        <tr class="memList">
+            <td class="t_c"><c:out value="${ii}" /></td>
+            <td class="t_c"><c:out value="${result.me_sido}" /></td>
+            <td><c:out value="${result.me_gugun}" /><button type="button" class="btnInfo fr"></button></td>
+            <td class="t_c"><c:out value="${result.me_biz_name}" /></td>
+            <td class="t_c"><c:out value="${result.me_name}" /></td>
+            <td class="t_c"><c:out value="${result.me_biz_tel}" /></td>
+        </tr>
+        <c:set var="ii" value="${ii - 1}" />
+    </c:forEach>
+    <c:if test="${fn:length(resultList) == 0}">
+        <tr>
+            <td colspan="6" class="first last">조회 결과가 없습니다.</td>
+        </tr>
+    </c:if>
+    </tbody>
+    </table>
+</div>
+
+<div class="board-list-paging fr">
+    <ol class="pagination" id="pagination">
+        <c:if test="${searchVO.prev}">
+            <li class="prev_end">
+                <a href="javascript:void(0);" onclick="fn_go_page(1); return false;" ></a>
+            </li>
+            <li class="prev">
+                <a href="javascript:void(0);" onclick="fn_go_page(${searchVO.startDate - 1}); return false;" ></a>
+            </li>
+        </c:if>
+        <c:forEach var="num" begin="${searchVO.startDate}" end="${searchVO.endDate}">
+            <li>
+                <a href="javascript:void(0);" onclick="fn_go_page(${num}); return false;" class="num ${pageIndex eq num ? 'on':'' }" title="${num}">${num}</a>
+            </li>
+        </c:forEach>
+        <c:if test="${searchVO.next}">
+            <li class="next">
+                <a href="javascript:void(0);" onclick="fn_go_page(${searchVO.endDate + 1}); return false;" ></a>
+            </li>
+            <li class="next_end">
+                <a href="javascript:void(0);" onclick="fn_go_page(${searchVO.realEnd }); return false;"></a>
+            </li>
+        </c:if>
+    </ol>
+</div>
+
 </div>
 
 <script>
@@ -100,9 +147,87 @@
 
     });
 </script>
+<script type="text/javascript">
+    function fn_go_page(pageNo) {
 
-<script>
+        var submitObj = new Object();
+
+        submitObj.pageIndex = pageNo;
+        $.ajax({
+            url: path + "/gnb01/lnb06/snb03/areaListAjax.do",
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(submitObj),
+            dataType: "json",
+            progress: true
+        })
+            .done(function(data) {
+
+                var result = data.resultList;
+                var postVO = data.postVO;
+                var realEnd = postVO.realEnd;
+                var startDate = postVO.startDate;
+                var startButtonDate = startDate - 1;
+                var endDate = postVO.endDate;
+                var endButtonDate = endDate + 1;
+                var pageIndex = postVO.pageIndex;
+                var resultCnt = data.resultCnt;
+                var totalPostPageCnt = data.totalPostPageCnt;
+                var recordCountPerPage = postVO.recordCountPerPage;
+
+                var ii = (resultCnt - (pageIndex - 1) * recordCountPerPage);
+
+                var content = '';
+                var content2 = '';
+
+                $.each(result, function(key, value) {
+
+                    content += '<tr class="memList">';
+                    content += '<td class="t_c">' + ii + '</td>';
+                    content += '<td class="t_c">' + value.me_sido + '</td>';
+                    content += '<td>' + value.me_gugun + '<button type="button" class="btnInfo fr"></button></td>';
+                    content += '<td class="t_c">' + value.me_biz_name + '</td>';
+                    content += '<td class="t_c">' + value.me_name + '</td>';
+                    content += '<td class="t_c">' + value.me_biz_tel + '</td>';
+                    content += '</tr>';
+                    ii--;
+                });
+
+                $(".listData").html(content);
+
+                content2 = '<input type="hidden" id="pageIndex" name="pageIndex" value="1">';
+                content2 += '<ol class="pagination" id="pagination">';
+
+                if (postVO.prev) {
+                    content2 += '<li class="prev_end"><a href="javascript:void(0);" onclick="fn_go_page(1); return false;" ></a></li>';
+                    content2 += '<li class="prev"><a href="javascript:void(0);" onclick="fn_go_page(' + startButtonDate + '); return false;" ></a></li>';
+                }
+
+                for (var num = startDate; num <= endDate; num++) {
+                    if (num == pageIndex) {
+                        content2 += '<li><a href="javascript:void(0);" onclick="fn_go_page(' + num + '); return false;" title="' + num + '" class="num on">' + num + '</a></li>';
+                    } else {
+                        content2 += '<li><a href="javascript:void(0);" onclick="fn_go_page(' + num + '); return false;" title="' + num + '" class="num">' + num + '</a></li>';
+                    }
+                }
+
+                if (postVO.next) {
+                    content2 += '<li class="next"><a href="javascript:void(0);" onclick="fn_go_page(' + endButtonDate + '); return false;" ></a></li>';
+                    content2 += '<li class="next_end"><a href="javascript:void(0);" onclick="fn_go_page(' + postVO.realEnd + '); return false;"></a></li>';
+                }
+
+                content2 += '</ol>';
+
+                $(".board-list-paging").html(content2);
+
+            })
+
+            .always(function() {
+
+            });
+    }
 
 </script>
+
 </body>
 </html>

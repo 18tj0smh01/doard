@@ -16,5 +16,7 @@ public interface PostMapper {
 
     int postEdit(PostVO postVO);
 
+    int getPostListCnt();
+
     PostVO selectPost(Long id);
 }

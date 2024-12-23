@@ -1,26 +1,20 @@
 package com.example.board.demo.controller;
 
 import com.example.board.demo.domain.CommentVO;
-import com.example.board.demo.domain.MemberVO;
+import com.example.board.demo.domain.Pagination;
 import com.example.board.demo.domain.PostVO;
 import com.example.board.demo.mapper.PostMapper;
 import com.example.board.demo.service.MemberService;
 import com.example.board.demo.service.PostService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import com.example.board.demo.domain.ResultVO;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/post")
@@ -40,16 +34,43 @@ public class PostController {
     }
 
     @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView list(HttpSession session) {
+    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, HttpSession session, Model model) {
 
         ModelAndView redirectView = new ModelAndView("redirect:/login");
         Long memberId = (Long) session.getAttribute("id");
+
+
 
     if (memberId == null) {
         return redirectView; // 세션이 없으면 로그인 페이지로
     }
 
-        List<PostVO> list =postMapper.selectPostList(10, 0);
+        List<PostVO> list = postMapper.selectPostList(10, 0);
+
+        //페이징[s]
+        Pagination pagination = new Pagination();
+        pagination.setCurrentPageNo(postVO.getPageIndex());
+        pagination.setRecordCountPerPage(postVO.getPageUnit());
+        pagination.setPageSize(postVO.getPageSize());
+
+        postVO.setFirstIndex(pagination.getFirstRecordIndex());
+        postVO.setRecordCountPerPage(pagination.getRecordCountPerPage());
+
+        int totPostCnt = postService.getPostListCnt();
+
+        pagination.setTotalRecordCount(totPostCnt);
+
+        postVO.setEndDate(pagination.getLastPageNoOnPageList());
+        postVO.setStartDate(pagination.getFirstPageNoOnPageList());
+        postVO.setPrev(pagination.getXprev());
+        postVO.setNext(pagination.getXnext());
+
+//        model.addAttribute("boardList",boardList);
+        model.addAttribute("totPostCnt",totPostCnt);
+        model.addAttribute("totalPageCnt",(int)Math.ceil(totPostCnt / (double)postVO.getPageUnit()));
+        model.addAttribute("pagination",pagination);
+        //페이징[e]
+
        return new ModelAndView("list","postList",list);
 
     }
@@ -86,7 +107,7 @@ public class PostController {
 
     // 게시글 상세보기
     @RequestMapping("detail")
-    public ModelAndView gotoDetail(HttpSession session, Model model,@RequestParam("id") Long id) {
+    public ModelAndView gotoDetail(@ModelAttribute("postVO") PostVO postVO, CommentVO commentVO, HttpSession session, Model model,@RequestParam("id") Long id) {
         ModelAndView redirectView = new ModelAndView("redirect:/login");
         Long memberId = (Long) session.getAttribute("id");
 
@@ -97,6 +118,55 @@ public class PostController {
         List<CommentVO> commentList = postService.selectPostComment(id);
         PostVO post = postService.getPostById(id);
         List<PostVO> postList = postService.getAllPosts(10, 0);
+
+        //댓글 페이징[s]
+        Pagination ComPagination = new Pagination();
+        ComPagination.setCurrentPageNo(commentVO.getPageIndex());
+        ComPagination.setRecordCountPerPage(commentVO.getPageUnit());
+        ComPagination.setPageSize(commentVO.getPageSize());
+
+        commentVO.setFirstIndex(ComPagination.getFirstRecordIndex());
+        commentVO.setRecordCountPerPage(ComPagination.getRecordCountPerPage());
+
+        int totComCnt = postService.getComListCnt();
+
+        ComPagination.setTotalRecordCount(totComCnt);
+
+        postVO.setEndDate(ComPagination.getLastPageNoOnPageList());
+        postVO.setStartDate(ComPagination.getFirstPageNoOnPageList());
+        postVO.setPrev(ComPagination.getXprev());
+        postVO.setNext(ComPagination.getXnext());
+
+//        model.addAttribute("boardList",boardList);
+        model.addAttribute("totComCnt",totComCnt);
+        model.addAttribute("totalPageCnt",(int)Math.ceil(totComCnt / (double)postVO.getPageUnit()));
+        model.addAttribute("comPagination",ComPagination);
+        //댓글 페이징[e]
+
+
+        //게시글 페이징[s]
+        Pagination postPagination = new Pagination();
+        postPagination.setCurrentPageNo(postVO.getPageIndex());
+        postPagination.setRecordCountPerPage(postVO.getPageUnit());
+        postPagination.setPageSize(postVO.getPageSize());
+
+        postVO.setFirstIndex(postPagination.getFirstRecordIndex());
+        postVO.setRecordCountPerPage(postPagination.getRecordCountPerPage());
+
+        int totPostCnt = postService.getPostListCnt();
+
+        postPagination.setTotalRecordCount(totPostCnt);
+
+        postVO.setEndDate(postPagination.getLastPageNoOnPageList());
+        postVO.setStartDate(postPagination.getFirstPageNoOnPageList());
+        postVO.setPrev(postPagination.getXprev());
+        postVO.setNext(postPagination.getXnext());
+
+        model.addAttribute("totPostCnt",totPostCnt);
+        model.addAttribute("totalPageCnt",(int)Math.ceil(totPostCnt / (double)postVO.getPageUnit()));
+        model.addAttribute("postPagination",postPagination);
+        //게시글 페이징[e]
+
 
         model.addAttribute("post", post);
         model.addAttribute("comments", commentList);

@@ -59,4 +59,11 @@
         FROM comment
         WHERE id = #{id}
     </select>
+
+    <select id="getComListCnt" resultType="int">
+        select
+            count(*)
+        from
+            COMMENT
+    </select>
 </mapper>

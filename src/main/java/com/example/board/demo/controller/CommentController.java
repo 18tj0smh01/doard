@@ -51,6 +51,8 @@ public class CommentController {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
 
+
+
         CommentVO commentVO = new CommentVO();
         commentVO.setPostId(postId);
         commentVO.setCommentContent(commentContent);

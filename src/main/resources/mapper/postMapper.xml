@@ -102,4 +102,12 @@
         WHERE post_id = #{postId}
     </select>
 
+    <select id="getPostListCnt" resultType="int">
+        select
+        count(*)
+        from
+        POST
+    </select>
+
+
 </mapper>

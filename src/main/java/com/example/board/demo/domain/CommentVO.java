@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommentVO {
+public class CommentVO extends PageVO {
     private Long id;
     private String commentContent;
     private String commentDate;
