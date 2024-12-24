@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface PostMapper {
-    List<PostVO> selectPostList(@Param("Pagination")Pagination pagination);
+    List<PostVO> selectPostList(Pagination pagination);
 
     int postUpload(PostVO postVO);
 
@@ -22,3 +22,4 @@ public interface PostMapper {
 
     PostVO selectPost(Long id);
 }
+

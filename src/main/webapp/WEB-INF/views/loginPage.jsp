@@ -41,7 +41,7 @@
 		<div class="col-lg-4"></div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="../js/bootstrap.js"></script>
+	<script src="../../resources/js/bootstrap.js"></script>
 <script>
 
 </script>

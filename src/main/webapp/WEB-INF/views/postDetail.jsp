@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Detail Page</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/postDetail.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/postDetail.css"/>
     <style>
         .reply-box {
             display: none;
@@ -16,6 +16,10 @@
 
         .reply-box.show-reply-box {
             display: block;
+        }
+
+        .reply {
+            margin-left: 20px;
         }
     </style>
 </head>
@@ -30,9 +34,6 @@
 <div class="main-container">
     <div class="main-box">
         <div class="post-box">
-<%--            <p>--%>
-<%--                ${postVO.content}--%>
-<%--            </p>--%>
             <div class="post-title">${post.postTitle}</div>
             <div class="info-box">
                 <div class="user-info">
@@ -40,7 +41,6 @@
                     <span class="view-count">조회 <span>${post.viewCount}</span></span>
                 </div>
                 <section class="order">
-                    <a href="<c:url value='/post/edit/${post.id}' />">수정</a>
                     <a href="<c:url value='/post/edit/${post.id}' />">수정</a>
                     <a href="<c:url value='/post/deletePost/${post.id}' />" class="delete">삭제</a>
                 </section>
@@ -62,25 +62,33 @@
             <!-- 댓글 목록 -->
             <div class="comment-container">
                 <c:forEach var="comment" items="${comments}">
-                    <div class="comment-info">
+                    <div class="comment-info" id="comment-${comment.id}">
                         <div class="comment-userName">${comment.memberName}</div>
                         <div class="comment-content">${comment.commentContent}</div>
-                        <section class="order">
-                            <a class="update">수정</a>
-                            <a href="">?id=${comment.id}&postId=${post.postId}" class="delete">삭제</a>
-                        </section>
                         <div class="comment-footer">
-                            <div class="comment-date">${comment.commentDate}</div>
                             <button type="button" class="reply-button">답글 쓰기</button>
                         </div>
 
-                        <!-- 대댓글 입력-->
+                        <!-- 대댓글 입력 -->
                         <div class="reply-box">
-                            <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요">${commentDTO.commentContent}</textarea>
+                            <textarea class="comment-input" data-parent-id="${comment.id}" placeholder="답글을 입력하세요"></textarea>
                             <div class="comment-footer">
                                 <button type="button" class="comment-cancel">취소</button>
                                 <button type="submit" class="comment-submit">등록</button>
                             </div>
+                        </div>
+
+                        <!-- 대댓글 리스트 -->
+                        <div class="reply-container">
+                            <c:forEach var="reply" items="${comments.replies}">
+                                <div class="comment-info reply" id="reply-${reply.id}">
+                                    <div class="comment-userName">${reply.memberName}</div>
+                                    <div class="comment-content">${reply.commentContent}</div>
+                                    <div class="comment-footer">
+                                        <div class="comment-date">${reply.commentDate}</div>
+                                    </div>
+                                </div>
+                            </c:forEach>
                         </div>
                     </div>
                 </c:forEach>
@@ -94,103 +102,111 @@
                     <button id="commentSubmit" class="comment-submit">등록</button>
                 </div>
             </div>
-
-<%--  페이지--%>
-            <div class="col-sm-12 col-md-7" style="text-align:right">
-                <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
-                    <ul class="pagination">
-
-                        <c:if test="${postVO.prev}">
-                            <li class="paginate_button page-item previous" id="dataTable_previous">
-                                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.startDate - 1}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-                            </li>
-                        </c:if>
-
-                        <c:forEach var="num" begin="${postVO.startDate}" end="${postVO.endDate}">
-                            <li class="paginate_button page-item">
-                                <a href="javascript:void(0);" onclick="fn_go_page(${num}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">${num}</a>
-                            </li>
-                        </c:forEach>
-
-                        <c:if test="${postVO.next}">
-                            <li class="paginate_button page-item next" id="dataTable_next">
-                                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.endDate + 1}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Next</a>
-                            </li>
-                        </c:if>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- 게시글 목록 -->
-        <div class="post-list-box">
-            <div class="other-post">최신 글</div>
-            <table>
-                <tbody>
-                <c:forEach var="otherPost" items="${postList}">
-                    <tr>
-                        <td class="td-num">${otherPost.id}</td>
-                        <td class="td-title">
-                            <a href="${pageContext.request.contextPath}/post/detail?postId=${otherPost.id}">${otherPost.postTitle}</a>
-                        </td>
-                        <td class="td-name">${otherPost.memberName}</td>
-                        <td class="td-date">${otherPost.postDate}</td>
-                        <td class="td-view">${otherPost.viewCount}</td>
-                        <td class="td-comment">${otherPost.commentCount}</td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.0.min.js">
-</script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $(".reply-button").click(function () {
-            const replyBox = $(this).closest(".comment-info").find(".reply-box");
-            replyBox.toggleClass("show-reply-box");
+        // 대댓글 입력창 토글
+        $(document).on('click', '.reply-button', function () {
+            const replyBox = $(this).closest('.comment-info').find('.reply-box');
+            replyBox.toggleClass('show-reply-box');
         });
 
-        $(".comment-cancel").click(function () {
-            $(this).closest(".reply-box").removeClass("show-reply-box");
+        // 대댓글 입력 취소
+        $(document).on('click', '.comment-cancel', function () {
+            $(this).closest('.reply-box').removeClass('show-reply-box');
         });
-    });
-</script>
-<script>
-    $(".replyAddBtn").on("click", function () {
 
-        var replyerObj = $("#newReplyWriter");
-        var replytextObj = $("#newReplyText");
-        var replyer = replyerObj.val();
-        var replytext = replytextObj.val();
+        // 댓글 등록
+        $('#commentSubmit').click(function () {
+            const content = $('#commentContent').val();
+            const postId = "${post.id}"; // 서버에서 post.id 주입
 
-        $.ajax({
-            type: "post",
-            url: "/replies/",
-            headers: {
-                "Content-Type" : "application/json",
-                "X-HTTP-Method-Override" : "POST"
-            },
-            dataType: "text",
-            data: JSON.stringify({
-                bno:bno,
-                replyer:replyer,
-                replytext:replytext
-            }),
-            success: function (result) {
-                console.log("result : " + result);
-                if (result == "INSERTED") {
-                    alert("댓글이 등록되었습니다.");
-                    replyPage = 1;
-                    getPage("/replies/" + bno + "/" + replyPage);
-                    replyerObj.val("");
-                    replytextObj.val("");
-                }
+            if (content.trim() === '') {
+                alert('댓글 내용을 입력하세요.');
+                return;
             }
+
+            $.ajax({
+                url: '/comment/add',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ content: content, postId: postId }),
+                success: function (response) {
+                    if (response.success) {
+                        appendComment(response.comment); // 댓글 추가 함수 호출
+                        $('#commentContent').val(''); // 입력 필드 초기화
+                    }
+                },
+                error: function () {
+                    alert('댓글 등록 중 오류가 발생했습니다.');
+                },
+            });
+        });
+
+        // 대댓글 등록
+        $(document).on('click', '.comment-submit', function () {
+            const parentId = $(this).closest('.reply-box').find('textarea').data('parent-id');
+            const content = $(this).closest('.reply-box').find('textarea').val();
+            const postId = "${post.id}"; // 서버에서 post.id 주입
+
+            if (content.trim() === '') {
+                alert('대댓글 내용을 입력하세요.');
+                return;
+            }
+
+            $.ajax({
+                url: '/comment/reply',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ content: content, parentId: parentId, postId: postId }),
+                success: function (response) {
+                    if (response.success) {
+                        appendReply(response.comment); // 대댓글 추가 함수 호출
+                    }
+                },
+                error: function () {
+                    alert('대댓글 등록 중 오류가 발생했습니다.');
+                },
+            });
         });
     });
+
+    // 댓글 추가 함수
+    function appendComment(comment) {
+        const commentHtml = `
+        <div class="comment-info" id="comment-${comment.id}">
+            <div class="comment-userName">${comment.memberName}</div>
+            <div class="comment-content">${comment.commentContent}</div>
+            <div class="comment-footer">
+                <button type="button" class="reply-button">답글 쓰기</button>
+            </div>
+            <div class="reply-box">
+                <textarea class="comment-input" data-parent-id="${comment.id}" placeholder="답글을 입력하세요"></textarea>
+                <div class="comment-footer">
+                    <button type="button" class="comment-cancel">취소</button>
+                    <button type="submit" class="comment-submit">등록</button>
+                </div>
+            </div>
+        </div>`;
+        $('.comment-container').append(commentHtml);
+    }
+
+    // 대댓글 추가 함수
+    function appendReply(reply) {
+        const replyHtml = `
+        <div class="comment-info reply" id="reply-${reply.id}">
+            <div class="comment-userName">${reply.memberName}</div>
+            <div class="comment-content">${reply.commentContent}</div>
+            <div class="comment-footer">
+                <div class="comment-date">${reply.commentDate}</div>
+            </div>
+        </div>`;
+        $(`#comment-${reply.parentCommentId} .reply-container`).append(replyHtml);
+    }
 </script>
 </body>
 </html>

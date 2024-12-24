@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -107,5 +108,15 @@ public class PostVO extends PageVO {
     }
     public void setCommentCount(Long commentCount) {
         this.commentCount = commentCount;
+    }
+
+    @JsonProperty("replies")
+    private List<CommentVO> replies;
+    public List<CommentVO> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<CommentVO> replies) {
+        this.replies = replies;
     }
 }

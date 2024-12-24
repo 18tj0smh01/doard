@@ -47,39 +47,47 @@
     <!-- 게시글 전체 리스트 -->
     <select id="selectPostList" resultType="postVO">
         SELECT
-        p.ID AS id,
-        p.POST_TITLE AS postTitle,
-        p.MEMBER_ID AS memberId,
-        m.MEMBER_NAME AS memberName,
-        p.POST_DATE AS postDate,
-        p.VIEWCOUNT AS viewCount,
-        COALESCE(c.commentCount, 0) AS commentCount
+            p.ID AS id,
+            p.POST_TITLE AS postTitle,
+            p.MEMBER_ID AS memberId,
+            m.MEMBER_NAME AS memberName,
+            p.POST_DATE AS postDate,
+            p.VIEWCOUNT AS viewCount,
+            COALESCE(c.commentCount, 0) AS commentCount
         FROM POST p
-        LEFT JOIN TBL_MEMBER m ON p.MEMBER_ID = m.ID
-        LEFT JOIN (
-        SELECT POST_ID, COUNT(*) AS commentCount
-        FROM COMMENT
-        GROUP BY POST_ID
+                 LEFT JOIN TBL_MEMBER m ON p.MEMBER_ID = m.ID
+                 LEFT JOIN (
+            SELECT POST_ID, COUNT(*) AS commentCount
+            FROM COMMENT
+            GROUP BY POST_ID
         ) c ON p.ID = c.POST_ID
         ORDER BY p.POST_DATE DESC
-        LIMIT #{limit} OFFSET #{offset}
+            LIMIT #{recordCountPerPage} OFFSET #{firstRecordIndex}
     </select>
+
 
     <!-- 게시글 조회 -->
     <select id="selectPost" resultType="postVO">
         SELECT
-        p.ID AS id,
-        p.POST_TITLE AS postTitle,
-        p.MEMBER_ID AS memberId,
-        m.MEMBER_NAME AS memberName,
-        p.POST_DATE AS postDate,
-        p.POST_UPDATED_TIME AS postUpdatedTime,
-        p.VIEWCOUNT AS viewCount,
-        p.POST_CONTENT AS postContent
+            p.ID AS id,
+            p.POST_TITLE AS postTitle,
+            p.MEMBER_ID AS memberId,
+            m.MEMBER_NAME AS memberName,
+            p.POST_DATE AS postDate,
+            p.POST_UPDATED_TIME AS postUpdatedTime,
+            p.VIEWCOUNT AS viewCount,
+            p.POST_CONTENT AS postContent,
+            COALESCE(c.commentCount, 0) AS commentCount
         FROM POST p
-        LEFT JOIN TBL_MEMBER m ON p.MEMBER_ID = m.ID
+                 LEFT JOIN TBL_MEMBER m ON p.MEMBER_ID = m.ID
+                 LEFT JOIN (
+            SELECT POST_ID, COUNT(*) AS commentCount
+            FROM COMMENT
+            GROUP BY POST_ID
+        ) c ON p.ID = c.POST_ID
         WHERE p.ID = #{id}
     </select>
+
 
     <!-- 글 수정 -->
     <update id="postEdit">

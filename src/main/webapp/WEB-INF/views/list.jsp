@@ -13,7 +13,7 @@
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>테스트 게시판</title>
-    <link rel="stylesheet" href="../css/main.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -59,9 +59,6 @@
         <tbody class="list-box" id="post-list">
         <c:forEach var="post" items="${postList}">
             <tr>
-                <td class="checkbox">
-                    <input type="checkbox" name="post" class="post-checkbox" data-post-id="${post.id}" />
-                </td>
                 <td class="td-num">${post.id}</td>
                 <td class="td-title">
                     <a draggable="false" href="${pageContext.request.contextPath}/post/detail?id=${post.id}">
@@ -74,58 +71,45 @@
                 <td class="td-comment">${post.commentCount}</td>
             </tr>
         </c:forEach>
+        <c:if test="${fn:length(postList) == 0}">
+            <tr>
+                <td colspan="6" class="first last">조회 결과가 없습니다.</td>
+            </tr>
+        </c:if>
         </tbody>
     </table>
 
     <!-- 페이징 -->
-    <tbody class="listData">
-    <c:set var="ii" value="${resultCnt - (searchVO.pageIndex -1) * paginationInfo.recordCountPerPage }" />
-    <c:forEach var="result" items="${resultList}" varStatus="sts">
-        <tr class="memList">
-            <td class="t_c"><c:out value="${ii}" /></td>
-            <td class="t_c"><c:out value="${result.me_sido}" /></td>
-            <td><c:out value="${result.me_gugun}" /><button type="button" class="btnInfo fr"></button></td>
-            <td class="t_c"><c:out value="${result.me_biz_name}" /></td>
-            <td class="t_c"><c:out value="${result.me_name}" /></td>
-            <td class="t_c"><c:out value="${result.me_biz_tel}" /></td>
-        </tr>
-        <c:set var="ii" value="${ii - 1}" />
-    </c:forEach>
-    <c:if test="${fn:length(resultList) == 0}">
-        <tr>
-            <td colspan="6" class="first last">조회 결과가 없습니다.</td>
-        </tr>
-    </c:if>
-    </tbody>
-    </table>
-</div>
-
-<div class="board-list-paging fr">
-    <ol class="pagination" id="pagination">
-        <c:if test="${postVO.prev}">
-            <li class="prev_end">
-                <a href="javascript:void(0);" onclick="fn_go_page(1); return false;" ></a>
-            </li>
-            <li class="prev">
-                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.startDate - 1}); return false;" ></a>
-            </li>
-        </c:if>
-        <c:forEach var="num" begin="${postVO.startDate}" end="${postVO.endDate}">
-            <li>
-                <a href="javascript:void(0);" onclick="fn_go_page(${num}); return false;" class="num ${pageIndex eq num ? 'on':'' }" title="${num}">${num}</a>
-            </li>
-        </c:forEach>
-        <c:if test="${postVO.next}">
-            <li class="next">
-                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.endDate + 1}); return false;" ></a>
-            </li>
-            <li class="next_end">
-                <a href="javascript:void(0);" onclick="fn_go_page(${postVO.realEnd }); return false;"></a>
-            </li>
-        </c:if>
-    </ol>
-</div>
-
+    <div class="board-list-paging fr">
+        <ol class="pagination" id="pagination">
+            <c:if test="${pagination.xprev}">
+                <!-- 이전 페이지로 이동 -->
+                <li class="prev_end">
+                    <a href="javascript:void(0);" onclick="fn_go_page(1); return false;">처음</a>
+                </li>
+                <li class="prev">
+                    <a href="javascript:void(0);" onclick="fn_go_page(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a>
+                </li>
+            </c:if>
+            <c:forEach var="num" begin="${pagination.firstPageNoOnPageList}" end="${pagination.lastPageNoOnPageList}">
+                <li>
+                    <a href="javascript:void(0);"
+                       onclick="fn_go_page(${num}); return false;"
+                       class="num ${pagination.currentPageNo == num ? 'on' : ''}"
+                       title="${num}">${num}</a>
+                </li>
+            </c:forEach>
+            <c:if test="${pagination.xnext}">
+                <!-- 다음 페이지로 이동 -->
+                <li class="next">
+                    <a href="javascript:void(0);" onclick="fn_go_page(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a>
+                </li>
+                <li class="next_end">
+                    <a href="javascript:void(0);" onclick="fn_go_page(${pagination.realEnd}); return false;">끝</a>
+                </li>
+            </c:if>
+        </ol>
+    </div>
 </div>
 
 <script>
@@ -144,90 +128,64 @@
             $(".post-checkbox").prop("checked", !isActive);
             $(this).toggleClass("active");
         });
-
     });
-</script>
-<script type="text/javascript">
+
     function fn_go_page(pageNo) {
+        var path = "${pageContext.request.contextPath}"; // 컨텍스트 경로를 가져옴
+        var submitObj = {
+            pageIndex: pageNo // 페이지 번호 설정
+        };
 
-        var path = "${pageContext.request.contextPath}
-        var submitObj = new Object();
-
-        submitObj.pageIndex = pageNo;
         $.ajax({
-            url: path + "/post/list",
+            url: path + "/post/list", // 요청 URL
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify(submitObj),
-            dataType: "json",
-            progress: true
+            dataType: "json"
         })
             .done(function(data) {
-
-                var result = data.resultList;
-                var postVO = data.postVO;
-                var realEnd = postVO.realEnd;
-                var startDate = postVO.startDate;
-                var startButtonDate = startDate - 1;
-                var endDate = postVO.endDate;
-                var endButtonDate = endDate + 1;
-                var pageIndex = postVO.pageIndex;
-                var resultCnt = data.resultCnt;
-                var totalPostPageCnt = data.totalPostPageCnt;
-                var recordCountPerPage = postVO.recordCountPerPage;
-
-                var ii = (resultCnt - (pageIndex - 1) * recordCountPerPage);
-
-                var content = '';
-                var content2 = '';
-
-                $.each(result, function(key, value) {
-
-                    content += '<tr class="memList">';
-                    content += '<td class="t_c">' + ii + '</td>';
-                    content += '<td class="t_c">' + value.me_sido + '</td>';
-                    content += '<td>' + value.me_gugun + '<button type="button" class="btnInfo fr"></button></td>';
-                    content += '<td class="t_c">' + value.me_biz_name + '</td>';
-                    content += '<td class="t_c">' + value.me_name + '</td>';
-                    content += '<td class="t_c">' + value.me_biz_tel + '</td>';
-                    content += '</tr>';
-                    ii--;
-                });
-
-                $(".listData").html(content);
-
-                content2 = '<input type="hidden" id="pageIndex" name="pageIndex" value="1">';
-                content2 += '<ol class="pagination" id="pagination">';
-
-                if (postVO.prev) {
-                    content2 += '<li class="prev_end"><a href="javascript:void(0);" onclick="fn_go_page(1); return false;" ></a></li>';
-                    content2 += '<li class="prev"><a href="javascript:void(0);" onclick="fn_go_page(' + startButtonDate + '); return false;" ></a></li>';
-                }
-
-                for (var num = startDate; num <= endDate; num++) {
-                    if (num == pageIndex) {
-                        content2 += '<li><a href="javascript:void(0);" onclick="fn_go_page(' + num + '); return false;" title="' + num + '" class="num on">' + num + '</a></li>';
-                    } else {
-                        content2 += '<li><a href="javascript:void(0);" onclick="fn_go_page(' + num + '); return false;" title="' + num + '" class="num">' + num + '</a></li>';
-                    }
-                }
-
-                if (postVO.next) {
-                    content2 += '<li class="next"><a href="javascript:void(0);" onclick="fn_go_page(' + endButtonDate + '); return false;" ></a></li>';
-                    content2 += '<li class="next_end"><a href="javascript:void(0);" onclick="fn_go_page(' + postVO.realEnd + '); return false;"></a></li>';
-                }
-
-                content2 += '</ol>';
-
-                $(".board-list-paging").html(content2);
-
+                // 데이터 처리: 게시글 리스트와 페이징 UI 업데이트
+                updatePostList(data.postList); // 게시글 목록 업데이트 함수 호출
+                updatePagination(data.pagination); // 페이징 UI 업데이트 함수 호출
             })
-
-            .always(function() {
-
+            .fail(function() {
+                alert("데이터 로딩 중 오류가 발생했습니다.");
             });
     }
 
+    function updatePostList(postList) {
+        var content = '';
+        $.each(postList, function(index, post) {
+            content += `
+                <tr>
+                    <td>${post.id}</td>
+                    <td><a href="${pageContext.request.contextPath}/post/detail?id=${post.id}">${post.postTitle}</a></td>
+                    <td>${post.memberName}</td>
+                    <td>${post.postDate}</td>
+                    <td>${post.viewCount}</td>
+                    <td>${post.commentCount}</td>
+                </tr>`;
+        });
+        $("#post-list").html(content); // 게시글 목록 업데이트
+    }
+
+    function updatePagination(pagination) {
+        var content = '<ol class="pagination" id="pagination">';
+        if (pagination.xprev) {
+            content += `<li class="prev_end"><a href="javascript:void(0);" onclick="fn_go_page(1); return false;">처음</a></li>`;
+            content += `<li class="prev"><a href="javascript:void(0);" onclick="fn_go_page(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a></li>`;
+        }
+        for (var num = pagination.firstPageNoOnPageList; num <= pagination.lastPageNoOnPageList; num++) {
+            content += `<li><a href="javascript:void(0);" onclick="fn_go_page(${num}); return false;"
+                class="num ${pagination.currentPageNo == num ? 'on' : ''}">${num}</a></li>`;
+        }
+        if (pagination.xnext) {
+            content += `<li class="next"><a href="javascript:void(0);" onclick="fn_go_page(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a></li>`;
+            content += `<li class="next_end"><a href="javascript:void(0);" onclick="fn_go_page(${pagination.realEnd}); return false;">끝</a></li>`;
+        }
+        content += '</ol>';
+        $(".board-list-paging").html(content); // 페이지네이션 업데이트
+    }
 </script>
 
 </body>

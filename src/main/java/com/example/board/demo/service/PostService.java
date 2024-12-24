@@ -21,12 +21,13 @@ public class PostService {
         this.commentMapper = commentMapper;
     }
 
-    // 모든 게시글 조회 (기본 limit과 offset)
+    // 모든 게시글 조회 (기본 recordCountPerPage과 firstRecordIndex)
     @Transactional(readOnly = true)
     public List<PostVO> getAllPosts(Pagination pagination) {
         return postMapper.selectPostList(pagination);
     }
 
+        int recordCountPerPage= 10;
     public int getPostListCnt() {
         return postMapper.getPostListCnt();
     }
