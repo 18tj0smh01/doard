@@ -38,8 +38,9 @@
             </button>
             <button class="check-all tool-button" id="select-all">전체 선택</button>
             <span class="right-tool">
+              <button type="button" class="writePost write tool-button" data-id="${post.id}">작성</button>
               <a class="write tool-button" href="${pageContext.request.contextPath}/post/write">작성</a>
-            <button class="delete tool-button">삭제</button>
+            <button type="button" class="deletePost delete tool-button" data-id="${post.id}">삭제</button>
           </span>
         </div>
     </div>
