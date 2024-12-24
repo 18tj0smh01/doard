@@ -116,11 +116,12 @@ public class PostController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String editPost(@ModelAttribute("postVO") PostVO postVO, RedirectAttributes rttr) {
+    public ModelAndView editPost(@ModelAttribute("postVO") PostVO postVO, RedirectAttributes rttr) {
         postService.editPost(postVO);
         rttr.addAttribute("id", postVO.getId());
         rttr.addFlashAttribute("msg", "MODIFIED");
-        return "redirect:/post/detail";
+
+        return new ModelAndView("redirect:/post/detail");
     }
 
 //    게시글 삭제
@@ -139,30 +140,67 @@ public class PostController {
 //        return new ModelAndView("redirect:/post/list");
 //    }
 
-    @DeleteMapping("/deletePost")
-    public ResponseEntity<String> deletePost(@RequestBody Map<String, Long> payload) {
+//    @DeleteMapping("/deletePost")
+//    public ResponseEntity<String> deletePost(@RequestBody Map<String, Long> payload) {
+//        if (payload == null || !payload.containsKey("id")) {
+//            return new ResponseEntity<>("삭제불가", HttpStatus.BAD_REQUEST);
+//        }
+//        Long postId = payload.get("id");
+//
+//        Long loggedInUserId = (Long) session.getAttribute("id");
+//        if (loggedInUserId == null) {
+//            return new ResponseEntity<>("로그인 필요", HttpStatus.UNAUTHORIZED);
+//        }
+//
+//        PostVO post = postService.getPostById(postId);
+//        if (post == null) {
+//            return new ResponseEntity<>("게시물을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+//        }
+//
+//        if (!post.getMemberId().equals(loggedInUserId)) {
+//            return new ResponseEntity<>("본인 글만 삭제 가능", HttpStatus.FORBIDDEN);
+//        }
+//
+//        postService.deletePost(postId);
+//        return new ResponseEntity<>("게시글이 삭제되었습니다.", HttpStatus.OK);
+//    }
+
+    @RequestMapping(value = "/deletePost", method = RequestMethod.DELETE)
+    public ModelAndView deletePost(@RequestBody Map<String, Long> payload, RedirectAttributes redirectAttributes) {
+        // 요청 데이터 확인
         if (payload == null || !payload.containsKey("id")) {
-            return new ResponseEntity<>("삭제불가", HttpStatus.BAD_REQUEST);
+            redirectAttributes.addFlashAttribute("errorMessage", "삭제 요청이 잘못되었습니다.");
+            return new ModelAndView("redirect:/post/list");
         }
         Long postId = payload.get("id");
 
+        // 로그인 사용자 확인
         Long loggedInUserId = (Long) session.getAttribute("id");
         if (loggedInUserId == null) {
-            return new ResponseEntity<>("로그인 필요", HttpStatus.UNAUTHORIZED);
+            redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
+            return new ModelAndView("redirect:/login");
         }
 
+        // 게시글 확인
         PostVO post = postService.getPostById(postId);
         if (post == null) {
-            return new ResponseEntity<>("게시물을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+            redirectAttributes.addFlashAttribute("errorMessage", "게시물을 찾을 수 없습니다.");
+            return new ModelAndView("redirect:/post/list");
         }
 
+        // 작성자 확인
         if (!post.getMemberId().equals(loggedInUserId)) {
-            return new ResponseEntity<>("본인 글만 삭제 가능", HttpStatus.FORBIDDEN);
+            redirectAttributes.addFlashAttribute("errorMessage", "본인의 글만 삭제할 수 있습니다.");
+            return new ModelAndView("redirect:/post/detail?id=" + postId);
         }
 
+        // 게시글 삭제
         postService.deletePost(postId);
-        return new ResponseEntity<>("게시글이 삭제되었습니다.", HttpStatus.OK);
+        redirectAttributes.addFlashAttribute("successMessage", "게시글이 삭제되었습니다.");
+        return new ModelAndView("redirect:/post/list");
     }
+
+
 
 
 

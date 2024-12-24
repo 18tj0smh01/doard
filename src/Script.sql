@@ -134,7 +134,7 @@ CREATE TABLE COMMENT (
 );
 
 INSERT INTO COMMENT (COMMENT_CONTENT, POST_ID, MEMBER_ID)
-VALUES('테스트 댓글4', 1, 3);
+VALUES('테스트 댓글1', 16, 3);
 
 select * from comment;
 
@@ -142,14 +142,14 @@ select * from comment;
 
 -- 댓글
 INSERT INTO COMMENT (COMMENT_CONTENT, POST_ID, MEMBER_ID)
-VALUES('테스트 댓글5', 13, 3);
+VALUES('테스트 댓글2', 16, 1);
 
 -- 대댓글
 INSERT INTO COMMENT (COMMENT_CONTENT, COMMENT_DEPTH, PARENT_COMMENT_ID, POST_ID, MEMBER_ID)
-VALUES('테스트 대댓글1', 1, 1, 13, 1);
+VALUES('테스트 대댓글1', 1, 9, 16, 1);
 
 -- 댓 or 대댓글 삭제
-	delete from comment where ID = 4;
+	delete from comment where ID = 5;
 
 -- 댓 or 대댓글 수정
 	UPDATE comment
@@ -165,7 +165,7 @@ SELECT
     c.COMMENT_UPDATED_TIME
 FROM COMMENT c
 JOIN TBL_MEMBER m ON c.MEMBER_ID = m.ID
-WHERE c.POST_ID = 1;
+WHERE c.POST_ID = 17;
 
 drop table comment;
 

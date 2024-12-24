@@ -41,9 +41,9 @@
                 </div>
                 <section class="order">
                     <a href="<c:url value='/post/edit/${post.id}' />">수정</a>
-                    <button type="button" class="edit tool-button" data-id="${post.id}">수정</button>
+                    <button type="button" class="edit editPost tool-button" data-id="${post.id}">수정</button>
 <%--                    <a href="<c:url value='/post/deletePost/${post.id}' />" class="delete">삭제</a>--%>
-                    <button type="button" class="delete tool-button" data-id="${post.id}">삭제</button>
+                    <button type="button" class="delete deletePost tool-button" data-id="${post.id}">삭제</button>
                 </section>
                 <div class="post-info">
                     <span class="post-date">${post.postDate}</span>
