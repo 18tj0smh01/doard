@@ -4,6 +4,8 @@
         페이징 ajax
             https://chobopark.tistory.com/249
             https://congsong.tistory.com/60#1.-%EB%B9%84%EB%8F%99%EA%B8%B0ajax-%EC%B2%98%EB%A6%AC%EC%9D%98-%EB%AC%B8%EC%A0%9C%EC%A0%90
+                History API
+                    https://velog.io/@minw0_o/history-API%EB%9E%80
         로그인
             https://velog.io/@rladuswl/4-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0-Feat.-Ajax%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0
             https://devmoony.tistory.com/47

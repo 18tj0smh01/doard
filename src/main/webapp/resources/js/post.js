@@ -108,5 +108,93 @@ $(document).ready(function () {
             });
         });
 
+    $.ajax({
+        url: path + "/post/list",
+        type: "POST",
+        contentType: "application/json;charset=UTF-8",
+        data: JSON.stringify(submitObj),
+        dataType: "json"
+    })
+        .done(function(data) {
+            updatePostList(data.postList);
+            updatePagination(data.pagination);
+        })
+        .fail(function() {
+            alert("데이터 로딩 중 오류가 발생했습니다.");
+        });
 
+    function updatePostList(postList) {
+        var content = '';
+        $.each(postList, function(index, post) {
+            content += `
+                <tr>
+                    <td>${post.id}</td>
+                    <td><a href="${pageContext.request.contextPath}/post/detail?id=${post.id}">${post.postTitle}</a></td>
+                    <td>${post.memberName}</td>
+                    <td>${post.postDate}</td>
+                    <td>${post.viewCount}</td>
+                    <td>${post.commentCount}</td>
+                </tr>`;
+        });
+        $("#post-list").html(content);
+    }
+
+    ///
+
+
+    // function goPage(pageNo) {
+    //     var path = "${pageContext.request.contextPath}";
+    //     var submitObj = {
+    //         pageIndex: pageNo
+    //     };
+    //
+    //     $.ajax({
+    //         url: path + "/post/list",
+    //         type: "POST",
+    //         contentType: "application/json;charset=UTF-8",
+    //         data: JSON.stringify(submitObj),
+    //         dataType: "json"
+    //     })
+    //         .done(function(data) {
+    //             updatePostList(data.postList);
+    //             updatePagination(data.pagination);
+    //         })
+    //         .fail(function() {
+    //             alert("데이터 로딩 중 오류가 발생했습니다.");
+    //         });
+    // }
+    //
+    // function updatePostList(postList) {
+    //     var content = '';
+    //     $.each(postList, function(index, post) {
+    //         content += `
+    //             <tr>
+    //                 <td>${post.id}</td>
+    //                 <td><a href="${pageContext.request.contextPath}/post/detail?id=${post.id}">${post.postTitle}</a></td>
+    //                 <td>${post.memberName}</td>
+    //                 <td>${post.postDate}</td>
+    //                 <td>${post.viewCount}</td>
+    //                 <td>${post.commentCount}</td>
+    //             </tr>`;
+    //     });
+    //     $("#post-list").html(content);
+    // }
+    //
+    // function updatePagination(pagination) {
+    //     var content = '<ol class="pagination" id="pagination">';
+    //     if (pagination.xprev) {
+    //         content += `<li class="prev_end"><a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a></li>`;
+    //         content += `<li class="prev"><a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a></li>`;
+    //     }
+    //     for (var num = pagination.firstPageNoOnPageList; num <= pagination.lastPageNoOnPageList; num++) {
+    //         content += `<li><a href="javascript:void(0);" onclick="goPage(${num}); return false;"
+    //             class="num ${pagination.currentPageNo == num ? 'on' : ''}">${num}</a></li>`;
+    //     }
+    //     if (pagination.xnext) {
+    //         content += `<li class="next"><a href="javascript:void(0);" onclick="goPage(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a></li>`;
+    //         content += `<li class="next_end"><a href="javascript:void(0);" onclick="goPage(${pagination.realEnd}); return false;">끝</a></li>`;
+    //     }
+    //     content += '</ol>';
+    //     $(".board-list-paging").html(content);
+    // }
 });
