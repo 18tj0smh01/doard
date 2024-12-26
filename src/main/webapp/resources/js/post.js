@@ -29,6 +29,12 @@ $(document).ready(function () {
     });
 
     // 게시글 작성
+    $(document).on("click", ".goWritePost", function () {
+        const memberId = $(this).data("id");
+            window.location.href = `/post/write`;
+    });
+
+    // 게시글 작성
     $(".writePost").click(function () {
         const postData = {
             postTitle: $("#postTitle").val(),
@@ -108,6 +114,7 @@ $(document).ready(function () {
             });
         });
 
+    //게시글 리스트
     $.ajax({
         url: path + "/post/list",
         type: "POST",

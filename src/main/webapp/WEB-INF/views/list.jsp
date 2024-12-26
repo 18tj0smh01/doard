@@ -3,18 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <meta
-            name="viewport"
-            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>테스트 게시판</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
@@ -38,8 +33,8 @@
             </button>
             <button class="check-all tool-button" id="select-all">전체 선택</button>
             <span class="right-tool">
-<%--              <button type="button" class="writePost write tool-button">작성</button>--%>
-              <a class="write tool-button" href="${pageContext.request.contextPath}/post/write">작성</a>
+              <button type="button" class="goWritePost write tool-button" data-id="${member.id}">작성</button>
+<%--              <a class="write tool-button" href="${pageContext.request.contextPath}/post/write">작성</a>--%>
             <button type="button" class="deletePost delete tool-button" data-id="${post.id}">삭제</button>
           </span>
         </div>
@@ -112,7 +107,10 @@
         </ol>
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script>
+    const path = "<%= request.getContextPath() %>";
+</script>
 <script>
     $(document).ready(function () {
         // 선택 모드 토글

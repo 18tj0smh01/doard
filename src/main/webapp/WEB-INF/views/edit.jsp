@@ -4,10 +4,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <meta
-            name="viewport"
-            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>write</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
@@ -15,7 +12,7 @@
 <body>
 <div class="header-box">
     <div class="header-content">
-        <a href="${pageContext.request.contextPath}/main">테스트 게시판</a>
+        <a href="${pageContext.request.contextPath}/post/list">테스트 게시판</a>
     </div>
 </div>
 <div class="board-title">글 수정</div>
