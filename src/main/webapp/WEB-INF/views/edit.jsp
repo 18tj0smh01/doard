@@ -10,7 +10,7 @@
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>write</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/write.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
 </head>
 <body>
 <div class="header-box">
@@ -19,12 +19,31 @@
     </div>
 </div>
 <div class="board-title">글 수정</div>
-<form action="${pageContext.request.contextPath}/post/edit" method="post" name="form" class="main-container">
+<%--<form action="${pageContext.request.contextPath}/post/edit" method="post" name="form" class="main-container">--%>
+<%--    <input type="hidden" name="id" value="${post.id}" />--%>
+<%--    <div class="title-box">--%>
+<%--        <input--%>
+<%--                type="text"--%>
+<%--                id="postTitle"--%>
+<%--                class="title-area"--%>
+<%--                value="${post.postTitle != null ? post.postTitle : ''}" />--%>
+<%--    </div>--%>
+<%--    <div class="file-input">--%>
+<%--        <input type="file" name="file" class="file-upload" />--%>
+<%--    </div>--%>
+<%--    <div class="content-box">--%>
+<%--        <textarea--%>
+<%--                id="postContent"--%>
+<%--                class="content-area">${post.postContent != null ? post.postContent : ''}</textarea>--%>
+<%--    </div>--%>
+<%--    <button type="button" class="ok-button">등록</button>--%>
+<%--</form>--%>
+<div class="main-container">
     <input type="hidden" name="id" value="${post.id}" />
     <div class="title-box">
         <input
                 type="text"
-                name="postTitle"
+                id="postTitle"
                 class="title-area"
                 value="${post.postTitle != null ? post.postTitle : ''}" />
     </div>
@@ -33,16 +52,17 @@
     </div>
     <div class="content-box">
         <textarea
-                name="postContent"
+                id="postContent"
                 class="content-area">${post.postContent != null ? post.postContent : ''}</textarea>
     </div>
-    <button type="button" class="ok-button">등록</button>
-</form>
+    <button type="button" class="save-edit-post" data-id="${post.id}">등록</button>
+</div>
 </body>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script>
-    $("button.ok-button").on("click", function () {
-        $("form[name='form']").submit();
-    });
-</script>
+<script src="${pageContext.request.contextPath}/resources/js/post.js"></script>
+<%--<script>--%>
+<%--    $("button.ok-button").on("click", function () {--%>
+<%--        $("form[name='form']").submit();--%>
+<%--    });--%>
+<%--</script>--%>
 </html>

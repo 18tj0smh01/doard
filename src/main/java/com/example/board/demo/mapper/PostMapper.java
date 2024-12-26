@@ -21,5 +21,8 @@ public interface PostMapper {
     int getPostListCnt();
 
     PostVO selectPost(Long id);
+
+    List<PostVO> getPosts(@Param("offset") int offset, @Param("size") int size);
+    int getTotalCount();;
 }
 

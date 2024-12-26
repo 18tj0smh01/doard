@@ -192,15 +192,15 @@ $(document).ready(function () {
         `;
 
         $(this).closest(".comment-info").append(editBox);
-        $(this).hide(); // 수정 버튼 숨김
+        $(this).hide();
     });
 
     // 댓글 수정 저장 버튼 이벤트
     $(document).on("click", ".edit-save", function () {
         const commentId = $(this).data("id");
-        const updatedContent = $(this).closest(".edit-box").find(".edit-input").val().trim();
+        const commentContent = $(this).closest(".edit-box").find(".edit-input").val().trim();
 
-        if (!updatedContent) {
+        if (!commentContent) {
             alert("수정할 내용을 입력하세요.");
             return;
         }
@@ -209,7 +209,7 @@ $(document).ready(function () {
             url: `/comment/edit/${commentId}`,
             type: "PUT",
             contentType: "application/json",
-            data: JSON.stringify({ commentContent: updatedContent }),
+            data: JSON.stringify({ commentContent: commentContent }),
             success: function () {
                 alert("댓글이 수정되었습니다.");
                 loadComments(postId);

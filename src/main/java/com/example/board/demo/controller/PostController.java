@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/post")
 public class PostController {
     private final HttpSession session;
@@ -61,7 +61,6 @@ public class PostController {
 
         return new ModelAndView("list", "postList", postList);
     }
-
     
 //    게시글 작성
     @GetMapping("/write")
@@ -70,19 +69,23 @@ public class PostController {
         if (memberId == null) {
             return new ModelAndView("redirect:/login");
         }
-        model.addAttribute("postVO", postVO);
+        model.addAttribute("postVO", new PostVO());
         return new ModelAndView("write");
     }
 
-    @RequestMapping("/write")
-    public ModelAndView writePost(@ModelAttribute("postVO") PostVO postVO, Model model) {
-        Long loggedInMemberId = (Long) session.getAttribute("id");
-        if (loggedInMemberId == null) {
-            return new ModelAndView("redirect:/login");
+    @PostMapping("/write")
+    public ResponseEntity<String> write(@RequestBody PostVO postVO) {
+        Long memberId = (Long) session.getAttribute("id");
+        if (memberId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
-        postVO.setMemberId(loggedInMemberId);
-        postService.createPost(postVO);
-        return new ModelAndView("redirect:/post/list");
+        postVO.setMemberId(memberId);
+        try {
+            postService.createPost(postVO);
+            return ResponseEntity.ok("게시글 작성이 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 작성에 실패했습니다.");
+        }
     }
 
 //    @PostMapping("/write")
@@ -126,14 +129,35 @@ public class PostController {
         return new ModelAndView("edit");
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ModelAndView editPost(@ModelAttribute("postVO") PostVO postVO, RedirectAttributes rttr) {
-        postService.editPost(postVO);
-        rttr.addAttribute("id", postVO.getId());
-        rttr.addFlashAttribute("msg", "MODIFIED");
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<String> editPost(@PathVariable("id") Long id, @RequestBody PostVO postVO) {
+        Long loggedInMemberId = (Long) session.getAttribute("id");
 
-        return new ModelAndView("redirect:/post/detail");
+        PostVO post = postService.getPostById(id);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("게시물을 찾을 수 없습니다.");
+        }
+
+        if (!post.getMemberId().equals(loggedInMemberId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("본인의 글만 삭제할 수 있습니다.");
+        }
+        postVO.setId(id);
+        postService.editPost(postVO);
+
+        return ResponseEntity.ok("게시글이 수정되었습니다.");
     }
+
+
+//    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+//    public ModelAndView editPost(@ModelAttribute("postVO") PostVO postVO, RedirectAttributes rttr) {
+//        postService.editPost(postVO);
+//        rttr.addAttribute("id", postVO.getId());
+//        rttr.addFlashAttribute("msg", "MODIFIED");
+//
+//        return new ModelAndView("redirect:/post/detail");
+//    }
 
 //    게시글 삭제
 //    @RequestMapping(value = "/deletePost/{id}", method = RequestMethod.GET)
@@ -176,43 +200,38 @@ public class PostController {
 //        return new ResponseEntity<>("게시글이 삭제되었습니다.", HttpStatus.OK);
 //    }
 
-    @RequestMapping(value = "/deletePost", method = RequestMethod.DELETE)
-    public ModelAndView deletePost(@RequestBody Map<String, Long> payload, RedirectAttributes redirectAttributes) {
-        // 요청 데이터 확인
-        if (payload == null || !payload.containsKey("id")) {
-            redirectAttributes.addFlashAttribute("errorMessage", "삭제 요청이 잘못되었습니다.");
-            return new ModelAndView("redirect:/post/list");
-        }
-        Long postId = payload.get("id");
+    @DeleteMapping("/deletePost/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        Long loggedInMemberId = (Long) session.getAttribute("id");
+//        if (loggedInUserId == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body("로그인이 필요합니다.");
+//        }
 
-        // 로그인 사용자 확인
-        Long loggedInUserId = (Long) session.getAttribute("id");
-        if (loggedInUserId == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
-            return new ModelAndView("redirect:/login");
-        }
-
-        // 게시글 확인
-        PostVO post = postService.getPostById(postId);
+        PostVO post = postService.getPostById(id);
         if (post == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "게시물을 찾을 수 없습니다.");
-            return new ModelAndView("redirect:/post/list");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("게시물을 찾을 수 없습니다.");
         }
 
-        // 작성자 확인
-        if (!post.getMemberId().equals(loggedInUserId)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "본인의 글만 삭제할 수 있습니다.");
-            return new ModelAndView("redirect:/post/detail?id=" + postId);
+        if (!post.getMemberId().equals(loggedInMemberId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("본인의 글만 삭제할 수 있습니다.");
         }
 
-        // 게시글 삭제
-        postService.deletePost(postId);
-        redirectAttributes.addFlashAttribute("successMessage", "게시글이 삭제되었습니다.");
-        return new ModelAndView("redirect:/post/list");
+        postService.deletePost(id);
+        return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 
 
-
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getPosts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Map<String, Object> response = postService.getPagedPosts(page, size);
+        return ResponseEntity.ok(response);
+    }
 
 
     private Pagination initializePagination(int pageIndex, int pageUnit, int pageSize, int totalRecordCount) {

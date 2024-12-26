@@ -117,5 +117,16 @@
         POST
     </select>
 
+    <select id="getPosts" resultType="PostVO">
+        SELECT *
+        FROM POST
+        ORDER BY POST_UPDATED_TIME DESC
+            LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM POST
+    </select>
 
 </mapper>

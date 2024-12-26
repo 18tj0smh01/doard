@@ -37,7 +37,8 @@
                     <span class="view-count">조회 <span>${post.viewCount}</span></span>
                 </div>
                 <section class="order">
-                    <a href="<c:url value='/post/edit/${post.id}' />">수정</a>
+<%--                    <a href="<c:url value='/post/edit/${post.id}' />">수정</a>--%>
+                    <button type="button" class="edit editPost tool-button" data-id="${post.id}">수정</button>
                     <button type="button" class="delete deletePost tool-button" data-id="${post.id}">삭제</button>
                 </section>
                 <div class="post-info">
@@ -82,6 +83,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/post.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/comment.js"></script>
 </body>
 </html>

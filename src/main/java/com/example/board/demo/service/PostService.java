@@ -8,7 +8,9 @@ import com.example.board.demo.mapper.PostMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PostService {
@@ -145,4 +147,17 @@ public class PostService {
         return commentMapper.findCommentById(id);
     }
 
+    public Map<String, Object> getPagedPosts(int page, int size) {
+        int offset = (page - 1) * size;
+        List<PostVO> posts = postMapper.getPosts(offset, size);
+        int totalCount = postMapper.getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("posts", posts);
+        response.put("currentPage", page);
+        response.put("totalPages", totalPages);
+        response.put("totalCount", totalCount);
+        return response;
+    }
 }
