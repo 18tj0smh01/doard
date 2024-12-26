@@ -132,22 +132,21 @@
     });
 
     function fn_go_page(pageNo) {
-        var path = "${pageContext.request.contextPath}"; // 컨텍스트 경로를 가져옴
+        var path = "${pageContext.request.contextPath}";
         var submitObj = {
-            pageIndex: pageNo // 페이지 번호 설정
+            pageIndex: pageNo
         };
 
         $.ajax({
-            url: path + "/post/list", // 요청 URL
+            url: path + "/post/list",
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify(submitObj),
             dataType: "json"
         })
             .done(function(data) {
-                // 데이터 처리: 게시글 리스트와 페이징 UI 업데이트
-                updatePostList(data.postList); // 게시글 목록 업데이트 함수 호출
-                updatePagination(data.pagination); // 페이징 UI 업데이트 함수 호출
+                updatePostList(data.postList);
+                updatePagination(data.pagination);
             })
             .fail(function() {
                 alert("데이터 로딩 중 오류가 발생했습니다.");
@@ -167,7 +166,7 @@
                     <td>${post.commentCount}</td>
                 </tr>`;
         });
-        $("#post-list").html(content); // 게시글 목록 업데이트
+        $("#post-list").html(content);
     }
 
     function updatePagination(pagination) {
@@ -185,7 +184,7 @@
             content += `<li class="next_end"><a href="javascript:void(0);" onclick="fn_go_page(${pagination.realEnd}); return false;">끝</a></li>`;
         }
         content += '</ol>';
-        $(".board-list-paging").html(content); // 페이지네이션 업데이트
+        $(".board-list-paging").html(content);
     }
 </script>
 
