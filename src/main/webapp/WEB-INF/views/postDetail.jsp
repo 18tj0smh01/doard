@@ -51,6 +51,7 @@
 
         <!-- 댓글 -->
         <div class="comment-section">
+            <input type="hidden" id="postId" value="${post.id}">
             <div class="content-footer">
                 <div class="comment-count-box">댓글 수: <span>${post.commentCount}</span></div>
             </div>

@@ -76,7 +76,7 @@ public class PostService {
     public List<PostVO> getPosts(Pagination pagination) {
         return postMapper.selectPostList(pagination);
     }
-    
+
     // 댓글 추가
     @Transactional
     public CommentVO uploadComment(CommentVO commentVO) {
@@ -109,23 +109,25 @@ public class PostService {
 
     // 댓글 수정
     @Transactional
-    public CommentVO editComment(CommentVO commentVO){
-        
-        int updatedRows =commentMapper.commentEdit(commentVO);
+    public CommentVO editComment(CommentVO commentVO) {
+        // 댓글 수정
+        int updatedRows = commentMapper.commentEdit(commentVO);
 
         if (updatedRows == 0) {
             throw new RuntimeException("댓글 수정에 실패했습니다. ID: " + commentVO.getId());
         }
 
-        CommentVO editComment = (CommentVO) commentMapper.selectPostComment(commentVO.getId());
-        if (editComment == null) {
+        // 수정된 댓글 조회
+        CommentVO editedComment = commentMapper.selectCommentResult(commentVO.getId());
+        if (editedComment == null) {
             throw new RuntimeException("수정 후 댓글을 조회하지 못했습니다. ID: " + commentVO.getId());
         }
 
-        return editComment;
+        return editedComment;
     }
-    
-    
+
+
+
     // 게시글에 대한 댓글 리스트 조회
     public List<CommentVO> selectPostComment(Long postId){
         return commentMapper.selectPostComment(postId);

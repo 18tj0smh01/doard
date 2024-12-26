@@ -18,6 +18,7 @@ public class CommentVO extends PageVO {
     private String commentDate;
     private String commentUpdateTime;
     private Long memberId;
+    private String memberName;
     private Long postId;
     private Long parentCommentId;        // 부모 댓글 ID (NULL이면 일반 댓글)
     private int commentDepth;            // 댓글 깊이 (0: 댓글, 1 이상: 대댓글)
@@ -41,6 +42,8 @@ public class CommentVO extends PageVO {
     public Long getMemberId() {
         return memberId;
     }
+
+    public String getMemberName() { return memberName;}
 
     public Long getPostId() {
         return postId;
@@ -73,6 +76,8 @@ public class CommentVO extends PageVO {
     public void setMemberId(Long memberId) {
         this.memberId = memberId;
     }
+
+    public void setMemberName(String memberName) { this.memberName = memberName;}
 
     public void setPostId(Long postId) {
         this.postId = postId;

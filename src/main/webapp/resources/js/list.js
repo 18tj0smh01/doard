@@ -14,14 +14,14 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: "/post/deletePost", // 서버의 DELETE 요청 URL
+            url: "/post/deletePost",
             type: "DELETE",
             // type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ id: postId }),
             success: function (response) {
                 alert(response);
-                window.location.href = "/post/list"; // 삭제 후 리스트 페이지로 이동
+                window.location.href = "/post/list";
             },
             error: function (xhr, status, error) {
                 alert("게시글 삭제에 실패했습니다.");
@@ -38,13 +38,13 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: "/post/write", // 서버의 POST 요청 URL
+            url: "/post/write",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ id: postId }),
             success: function (response) {
                 alert(response);
-                window.location.href = "/post/list"; // 작성 후 리스트 페이지로 이동
+                window.location.href = "/post/list";
             },
             error: function (xhr, status, error) {
                 alert("게시글 작성에 실패했습니다.");

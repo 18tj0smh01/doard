@@ -74,14 +74,25 @@ public class PostController {
         return new ModelAndView("write");
     }
 
-    @PostMapping("/write")
-    public ModelAndView write(@ModelAttribute PostVO postVO) {
-        Long memberId = (Long) session.getAttribute("id");
-        postVO.setMemberId(memberId);
+    @RequestMapping("/write")
+    public ModelAndView writePost(@ModelAttribute("postVO") PostVO postVO, Model model) {
+        Long loggedInMemberId = (Long) session.getAttribute("id");
+        if (loggedInMemberId == null) {
+            return new ModelAndView("redirect:/login");
+        }
+        postVO.setMemberId(loggedInMemberId);
         postService.createPost(postVO);
-
-        return new ModelAndView("redirect:/post/detail?id=" + postVO.getId());
+        return new ModelAndView("redirect:/post/list");
     }
+
+//    @PostMapping("/write")
+//    public ModelAndView write(@ModelAttribute PostVO postVO) {
+//        Long memberId = (Long) session.getAttribute("id");
+//        postVO.setMemberId(memberId);
+//        postService.createPost(postVO);
+//
+//        return new ModelAndView("redirect:/post/detail?id=" + postVO.getId());
+//    }
 
 //  게시글 상세
     @RequestMapping(value = "/detail", method = RequestMethod.GET)

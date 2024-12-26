@@ -23,6 +23,8 @@ public interface CommentMapper {
 
     CommentVO findCommentById(Long commentId);
 
+    CommentVO selectCommentResult(Long commentId);
+
     public List<CommentVO> selectAll(Long commentId);
 
     int getComListCnt();

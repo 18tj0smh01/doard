@@ -10,7 +10,7 @@
 <!--대댓글 작성-->
     <insert id="replyUpload">
         INSERT INTO COMMENT (COMMENT_CONTENT, COMMENT_DEPTH, PARENT_COMMENT_ID, POST_ID, MEMBER_ID)
-        VALUES(#{commentContent}, 1, 1, #{postId}, #{memberId})
+        VALUES (#{commentContent}, 1, #{parentCommentId}, #{postId}, #{memberId})
     </insert>
 <!--댓 or 대댓글 삭제-->
     <delete id="deleteComment">
@@ -18,13 +18,17 @@
     </delete>
 
 <!--댓 or 대댓글 수정 (임시)-->
-    <update id="commentEdit">
+    <update id="commentEdit" >
         UPDATE comment
         SET
         comment_CONTENT = #{commentContent},
         comment_UPDATED_TIME = CURRENT_TIMESTAMP
         WHERE ID = #{id}
     </update>
+
+    <select id="selectCommentResult" resultType="commentVO">
+        SELECT * FROM comment WHERE ID = #{id}
+    </select>
 
     <select id="selectAll" resultType="commentVO">
         SELECT RE.ID, RE.COMMENT_CONTENT, RE.COMMENT_DATE, RE.COMMENT_UPDATED_TIME,
