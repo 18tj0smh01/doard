@@ -30,9 +30,6 @@
 <div class="main-container">
     <div class="main-box">
         <div class="post-box">
-<%--            <p>--%>
-<%--                ${postVO.content}--%>
-<%--            </p>--%>
             <div class="post-title">${post.postTitle}</div>
             <div class="info-box">
                 <div class="user-info">
@@ -41,8 +38,6 @@
                 </div>
                 <section class="order">
                     <a href="<c:url value='/post/edit/${post.id}' />">수정</a>
-                    <button type="button" class="edit editPost tool-button" data-id="${post.id}">수정</button>
-<%--                    <a href="<c:url value='/post/deletePost/${post.id}' />" class="delete">삭제</a>--%>
                     <button type="button" class="delete deletePost tool-button" data-id="${post.id}">삭제</button>
                 </section>
                 <div class="post-info">
@@ -61,38 +56,13 @@
             </div>
 
             <!-- 댓글 목록 -->
-            <div class="comment-container">
+            <div id="comment-container">
                 <c:forEach var="comment" items="${comments}">
                     <div class="comment-info">
                         <div class="comment-userName">${comment.memberName}</div>
                         <div class="comment-content">${comment.commentContent}</div>
-                        <section class="order">
-                            <a class="update">수정</a>
-                            <a href="">?id=${comment.id}&postId=${post.postId}" class="delete">삭제</a>
-                        </section>
                         <div class="comment-footer">
                             <div class="comment-date">${comment.commentDate}</div>
-                            <button type="button" class="reply-button">답글 쓰기</button>
-                        </div>
-
-                            <%--대댓글--%>
-                        <c:forEach var="reply" items="${comment.replies}">
-                            <div class="comment-reply">
-                                <div class="comment-userName">${reply.memberName}</div>
-                                <div class="comment-content">${reply.commentContent}</div>
-                                <div class="comment-footer">
-                                    <div class="comment-date">${reply.commentDate}</div>
-                                </div>
-                            </div>
-                        </c:forEach>
-
-                        <!-- 대댓글 입력-->
-                        <div class="reply-box">
-                            <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요">${commentDTO.commentContent}</textarea>
-                            <div class="comment-footer">
-                                <button type="button" class="comment-cancel">취소</button>
-                                <button type="submit" class="comment-submit">등록</button>
-                            </div>
                         </div>
                     </div>
                 </c:forEach>
@@ -103,51 +73,14 @@
                 <div class="comment-user">${memberName}</div>
                 <textarea id="commentContent" class="comment-input" placeholder="댓글을 입력하세요"></textarea>
                 <div class="comment-footer">
-                    <button id="commentSubmit" class="comment-submit">등록</button>
+                    <button id="commentSubmit" class="comment-submit" data-post-id="${post.id}">등록</button>
                 </div>
             </div>
-        </div>
-<%--  페이지--%>
-
-        <!-- 게시글 목록 -->
-        <div class="post-list-box">
-            <div class="other-post">최신 글</div>
-            <table>
-                <tbody>
-                <c:forEach var="otherPost" items="${postList}">
-                    <tr>
-                        <td class="td-num">${otherPost.id}</td>
-                        <td class="td-title">
-                            <a href="${pageContext.request.contextPath}/post/detail?postId=${otherPost.id}">${otherPost.postTitle}</a>
-                        </td>
-                        <td class="td-name">${otherPost.memberName}</td>
-                        <td class="td-date">${otherPost.postDate}</td>
-                        <td class="td-view">${otherPost.viewCount}</td>
-                        <td class="td-comment">${otherPost.commentCount}</td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="${pageContext.request.contextPath}/resources/js/detail.js"></script>
-<script>
-    $(document).ready(function () {
-        $(".reply-button").click(function () {
-            const replyBox = $(this).closest(".comment-info").find(".reply-box");
-            replyBox.toggleClass("show-reply-box");
-        });
-
-        $(".comment-cancel").click(function () {
-            $(this).closest(".reply-box").removeClass("show-reply-box");
-        });
-    });
-</script>
-<script>
-    let postId = ${post.id};
-</script>
+<script src="${pageContext.request.contextPath}/resources/js/comment.js"></script>
 </body>
 </html>
