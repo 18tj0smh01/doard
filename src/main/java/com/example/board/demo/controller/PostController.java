@@ -41,26 +41,38 @@ public class PostController {
     }
 
 //    게시글 리스트
-    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, Model model, Pagination pagination) {
-        Long memberId = (Long) session.getAttribute("id");
-        if (memberId == null) {
-            return new ModelAndView("redirect:/login");
-        }
+@RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, Model model) {
+    logger.debug("POST 요청 수신: /list, pageIndex={}, searchWrd={}", postVO.getPageIndex(), postVO.getSearchWrd());
 
-        int totPostCnt = postService.getPostListCnt();
-        Pagination postPagination = initializePagination(postVO.getPageIndex(), postVO.getPageUnit(), postVO.getPageSize(), totPostCnt);
-
-        List<PostVO> postList = postMapper.selectPostList(postPagination);
-
-        model.addAttribute("totPostCnt", totPostCnt);
-        model.addAttribute("totalPageCnt", (int) Math.ceil(totPostCnt / (double) postPagination.getRecordCountPerPage()));
-        model.addAttribute("pagination", postPagination);
-
-        logger.debug("Post list retrieved. Total posts: {}, Current page: {}", totPostCnt, postPagination.getCurrentPageNo());
-
-        return new ModelAndView("list", "postList", postList);
+    if (session == null || session.getAttribute("id") == null) {
+        logger.warn("세션 없음. 로그인 페이지로 리다이렉트");
+        return new ModelAndView("redirect:/login");
     }
+
+    Long memberId = (Long) session.getAttribute("id");
+    logger.debug("로그인 사용자 ID: {}", memberId);
+
+    int totPostCnt = postService.getPostListCnt();
+    logger.debug("전체 게시글 수: {}", totPostCnt);
+
+    int pageIndex = postVO.getPageIndex() != null ? postVO.getPageIndex() : 1;
+    int pageUnit = postVO.getPageUnit() != null ? postVO.getPageUnit() : 10;
+    int pageSize = postVO.getPageSize() != null ? postVO.getPageSize() : 10;
+
+    Pagination postPagination = initializePagination(pageIndex, pageUnit, pageSize, totPostCnt);
+    logger.debug("Pagination 정보: {}", postPagination);
+
+    List<PostVO> postList = postService.getPaginatedPostList(postPagination);
+    logger.debug("가져온 게시글 리스트: {}", postList);
+
+    model.addAttribute("totPostCnt", totPostCnt);
+    model.addAttribute("totalPageCnt", (int) Math.ceil(totPostCnt / (double) postPagination.getRecordCountPerPage()));
+    model.addAttribute("pagination", postPagination);
+    model.addAttribute("postList", postList);
+
+    return new ModelAndView("list", model.asMap());
+}
     
 //    게시글 작성
     @GetMapping("/write")

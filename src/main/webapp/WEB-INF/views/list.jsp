@@ -74,39 +74,68 @@
         </c:if>
         </tbody>
     </table>
-
     <!-- 페이징 -->
-    <div class="board-list-paging fr">
-        <ol class="pagination" id="pagination">
-            <c:if test="${pagination.xprev}">
-                <!-- 이전 페이지로 이동 -->
-                <li class="prev_end">
-                    <a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a>
-                </li>
-                <li class="prev">
-                    <a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a>
-                </li>
-            </c:if>
-            <c:forEach var="num" begin="${pagination.firstPageNoOnPageList}" end="${pagination.lastPageNoOnPageList}">
-                <li>
-                    <a href="javascript:void(0);"
-                       onclick="goPage(${num}); return false;"
-                       class="num ${pagination.currentPageNo == num ? 'on' : ''}"
-                       title="${num}">${num}</a>
-                </li>
-            </c:forEach>
-            <c:if test="${pagination.xnext}">
-                <!-- 다음 페이지로 이동 -->
-                <li class="next">
-                    <a href="javascript:void(0);" onclick="goPage(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a>
-                </li>
-                <li class="next_end">
-                    <a href="javascript:void(0);" onclick="goPage(${pagination.realEnd}); return false;">끝</a>
-                </li>
-            </c:if>
-        </ol>
+    <!-- Paging[s] -->
+
+    <div class="col-sm-12 col-md-7" style="text-align:right">
+        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+            <ul class="pagination">
+
+                <c:if test="${postVO.prev}">
+                    <li class="paginate_button page-item previous" id="dataTable_previous">
+                        <a href="javascript:void(0);" onclick="goPage(${postVO.startDate - 1}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                    </li>
+                </c:if>
+
+                <c:forEach var="num" begin="${postVO.startDate}" end="${postVO.endDate}">
+                    <li class="paginate_button page-item">
+                        <a href="javascript:void(0);" onclick="goPage(${num}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">${num}</a>
+                    </li>
+                </c:forEach>
+
+                <c:if test="${postVO.next}">
+                    <li class="paginate_button page-item next" id="dataTable_next">
+                        <a href="javascript:void(0);" onclick="goPage(${postVO.endDate + 1}); return false;" aria-controls="dataTable" data-dt-idx="0" tabindex="0" class="page-link">Next</a>
+                    </li>
+                </c:if>
+            </ul>
+        </div>
     </div>
+    <!-- Paging[e] -->
+<%--    <div class="board-list-paging fr">--%>
+<%--        <ol class="pagination" id="pagination">--%>
+<%--            <c:if test="${pagination.xprev}">--%>
+<%--                <!-- 이전 페이지로 이동 -->--%>
+<%--                <li class="prev_end">--%>
+<%--                    <a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a>--%>
+<%--                </li>--%>
+<%--                <li class="prev">--%>
+<%--                    <a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a>--%>
+<%--                </li>--%>
+<%--            </c:if>--%>
+<%--            <c:forEach var="num" begin="${pagination.firstPageNoOnPageList}" end="${pagination.lastPageNoOnPageList}">--%>
+<%--                <li>--%>
+<%--                    <a href="javascript:void(0);"--%>
+<%--                       onclick="goPage(${num}); return false;"--%>
+<%--                       class="num ${pagination.currentPageNo == num ? 'on' : ''}"--%>
+<%--                       title="${num}">${num}</a>--%>
+<%--                </li>--%>
+<%--            </c:forEach>--%>
+<%--            <c:if test="${pagination.xnext}">--%>
+<%--                <!-- 다음 페이지로 이동 -->--%>
+<%--                <li class="next">--%>
+<%--                    <a href="javascript:void(0);" onclick="goPage(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a>--%>
+<%--                </li>--%>
+<%--                <li class="next_end">--%>
+<%--                    <a href="javascript:void(0);" onclick="goPage(${pagination.realEnd}); return false;">끝</a>--%>
+<%--                </li>--%>
+<%--            </c:if>--%>
+<%--        </ol>--%>
+<%--    </div>--%>
 </div>
+<form method="get"  id="listForm" action="/post/list">
+    <input type="hidden" id="pageIndex" name="pageIndex" val="" />
+</form>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script>
     const path = "<%= request.getContextPath() %>";

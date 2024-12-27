@@ -114,37 +114,45 @@ $(document).ready(function () {
             });
         });
 
-    //게시글 리스트
-    $.ajax({
-        url: path + "/post/list",
-        type: "POST",
-        contentType: "application/json;charset=UTF-8",
-        data: JSON.stringify(submitObj),
-        dataType: "json"
-    })
-        .done(function(data) {
-            updatePostList(data.postList);
-            updatePagination(data.pagination);
-        })
-        .fail(function() {
-            alert("데이터 로딩 중 오류가 발생했습니다.");
+    $(document).ready(function () {
+        const path = "/post"; // 서버 경로 설정
+
+        // 디버깅용 변수 선언
+        const submitObj = {
+            pageIndex: 1, // 기본 페이지
+            searchWrd: $("#searchWrd").val() || "" // 검색어가 없으면 빈 값
+        };
+
+        // AJAX 요청 디버깅 로그 추가
+        console.log("AJAX 요청 시작:", {
+            url: `${path}/list`,
+            method: "POST",
+            data: submitObj
         });
 
-    function updatePostList(postList) {
-        var content = '';
-        $.each(postList, function(index, post) {
-            content += `
-                <tr>
-                    <td>${post.id}</td>
-                    <td><a href="${pageContext.request.contextPath}/post/detail?id=${post.id}">${post.postTitle}</a></td>
-                    <td>${post.memberName}</td>
-                    <td>${post.postDate}</td>
-                    <td>${post.viewCount}</td>
-                    <td>${post.commentCount}</td>
-                </tr>`;
-        });
-        $("#post-list").html(content);
-    }
+        // 게시글 리스트 로드
+        $.ajax({
+            url: `${path}/list`,
+            type: "POST",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(submitObj),
+            dataType: "json"
+        })
+            .done(function (data) {
+                console.log("서버 응답 데이터:", data); // 서버에서 받은 데이터 로그
+                updatePostList(data.postList);
+                updatePagination(data.pagination);
+            })
+            .fail(function (xhr, status, error) {
+                console.error("AJAX 요청 실패:", {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    error: error
+                });
+                alert("데이터 로딩 중 오류가 발생했습니다.");
+            });
+    });
+
 
     ///
 
