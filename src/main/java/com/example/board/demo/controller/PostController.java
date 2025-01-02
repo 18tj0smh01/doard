@@ -42,6 +42,38 @@ public class PostController {
     }
 
 //    게시글 리스트
+    @GetMapping("/list/json")
+    public ResponseEntity<?> getPostListJson(
+            @RequestParam(defaultValue = "1") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageUnit) {
+
+        int totalPostCount = postService.getPostListCnt();
+        Pagination pagination = initializePagination(pageIndex, pageUnit, 10, totalPostCount);
+        List<PostVO> postList = postMapper.selectPostList(pagination);
+
+        return ResponseEntity.ok(Map.of("postList", postList, "pagination", pagination));
+    }
+
+    @GetMapping("/list")
+    public ModelAndView getPostListHtml(
+            @RequestParam(defaultValue = "1") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageUnit) {
+
+        Long memberId = (Long) session.getAttribute("id");
+        if (memberId == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        int totalPostCount = postService.getPostListCnt();
+        Pagination pagination = initializePagination(pageIndex, pageUnit, 10, totalPostCount);
+        List<PostVO> postList = postMapper.selectPostList(pagination);
+
+        ModelAndView modelAndView = new ModelAndView("list");
+        modelAndView.addObject("postList", postList);
+        modelAndView.addObject("pagination", pagination);
+        return modelAndView;
+    }
+
 //    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
 //    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, Model model, Pagination pagination) {
 //        Long memberId = (Long) session.getAttribute("id");
@@ -62,22 +94,6 @@ public class PostController {
 //
 //        return new ModelAndView("list", "postList", postList);
 //    }
-
-    @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getPostList(
-            @RequestParam(defaultValue = "1") int pageIndex,
-            @RequestParam(defaultValue = "10") int pageUnit) {
-
-        int totalPostCount = postService.getPostListCnt();
-        Pagination pagination = initializePagination(pageIndex, pageUnit, 10, totalPostCount);
-        List<PostVO> postList = postMapper.selectPostList(pagination);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("postList", postList);
-        response.put("pagination", pagination);
-
-        return ResponseEntity.ok(response);
-    }
 
 //    게시글 작성
     @GetMapping("/write")
@@ -256,12 +272,11 @@ public class PostController {
         pagination.setCurrentPageNo(pageIndex > 0 ? pageIndex : 1);
         pagination.setRecordCountPerPage(pageUnit > 0 ? pageUnit : 10);
         pagination.setPageSize(pageSize > 0 ? pageSize : 10);
-        pagination.setFirstRecordIndex((pagination.getCurrentPageNo() - 1) * pagination.getRecordCountPerPage());
+        pagination.setFirstRecordIndex((pageIndex - 1) * pageUnit);
+//        pagination.setFirstRecordIndex((pagination.getCurrentPageNo() - 1) * pagination.getRecordCountPerPage());
         pagination.setTotalRecordCount(totalRecordCount);
-
         int realEnd = (int) Math.ceil((double) totalRecordCount / pagination.getRecordCountPerPage());
         pagination.setRealEnd(realEnd);
-
         pagination.setXprev(pagination.getCurrentPageNo() > 1);
         pagination.setXnext(pagination.getCurrentPageNo() < realEnd);
 

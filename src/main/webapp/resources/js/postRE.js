@@ -3,29 +3,35 @@ $(document).ready(function () {
         pageIndex: 1,
         pageUnit: 10
     };
-
+    function goPage(pageNo) {
+        submitObj.pageIndex = pageNo;
+        console.log("goPage called with pageNo:", pageNo);
+        loadPostList();
+    }
     function loadPostList() {
-        console.log("loadPostList called with submitObj:", submitObj);
+        console.log("loadPostList:", submitObj);
 
         $.ajax({
-            url: "/post/list",
+            url: "/post/list/json",
             type: "GET",
-            contentType: "application/json",
-            data: JSON.stringify(submitObj),
-            dataType: "json"
-        })
-            .done(function (data) {
-                console.log("Response from server:", data);
-                updatePostList(data.postList);
-                updatePagination(data.pagination);
-            })
-            .fail(function (xhr, status, error) {
+            data: submitObj,
+            dataType: "json",
+            success: function (response) {
+                console.log("Response from server:", response);
+                updatePostList(response.postList);
+                updatePagination(response.pagination);
+            },
+            error: function (xhr, status, error) {
                 alert("데이터 로딩 중 오류가 발생했습니다.");
                 console.error("Error occurred:", error);
-                console.error("Response status:", status);
-                console.error("XHR object:", xhr);
-            });
+            }
+        });
     }
+
+    $(".pagination-button").on("click", function () {
+        const pageIndex = $(this).data("page");
+        loadPostList(pageIndex);
+    });
 
     function updatePostList(postList) {
         console.log("updatePostList called with postList:", postList);
@@ -170,11 +176,6 @@ $(document).ready(function () {
         });
     });
 
-    function goPage(pageNo) {
-        submitObj.pageIndex = pageNo;
-        console.log("goPage called with pageNo:", pageNo);
-        loadPostList();
-    }
 
     // 초기 페이지 로드
     loadPostList();

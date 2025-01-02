@@ -54,33 +54,32 @@
         </tr>
         </thead>
         <tbody class="list-box" id="post-list">
-        <c:forEach var="post" items="${postList}">
-            <tr>
-                <td class="td-num">${post.id}</td>
-                <td class="td-title">
-                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?id=${post.id}">
-                            ${post.postTitle}
-                    </a>
-                </td>
-                <td class="td-name">${post.memberName}</td>
-                <td class="td-date"><fmt:formatDate value="${post.postDate}" pattern="yyyy-MM-dd" /></td>
-                <td class="td-view">${post.viewCount}</td>
-                <td class="td-comment">${post.commentCount}</td>
-            </tr>
-        </c:forEach>
-        <c:if test="${fn:length(postList) == 0}">
-            <tr>
-                <td colspan="6" class="first last">조회 결과가 없습니다.</td>
-            </tr>
-        </c:if>
+<%--        <c:forEach var="post" items="${postList}">--%>
+<%--            <tr>--%>
+<%--                <td class="td-num">${post.id}</td>--%>
+<%--                <td class="td-title">--%>
+<%--                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?id=${post.id}">--%>
+<%--                            ${post.postTitle}--%>
+<%--                    </a>--%>
+<%--                </td>--%>
+<%--                <td class="td-name">${post.memberName}</td>--%>
+<%--                <td class="td-date"><fmt:formatDate value="${post.postDate}" pattern="yyyy-MM-dd" /></td>--%>
+<%--                <td class="td-view">${post.viewCount}</td>--%>
+<%--                <td class="td-comment">${post.commentCount}</td>--%>
+<%--            </tr>--%>
+<%--        </c:forEach>--%>
+<%--        <c:if test="${fn:length(postList) == 0}">--%>
+<%--            <tr>--%>
+<%--                <td colspan="6" class="first last">조회 결과가 없습니다.</td>--%>
+<%--            </tr>--%>
+<%--        </c:if>--%>
         </tbody>
     </table>
 
     <!-- 페이징 -->
     <div class="board-list-paging fr">
-        <ol class="pagination" id="pagination">
+        <ul class="pagination" id="pagination">
             <c:if test="${pagination.xprev}">
-                <!-- 이전 페이지로 이동 -->
                 <li class="prev_end">
                     <a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a>
                 </li>
@@ -90,14 +89,10 @@
             </c:if>
             <c:forEach var="num" begin="${pagination.firstPageNoOnPageList}" end="${pagination.lastPageNoOnPageList}">
                 <li>
-                    <a href="javascript:void(0);"
-                       onclick="goPage(${num}); return false;"
-                       class="num ${pagination.currentPageNo == num ? 'on' : ''}"
-                       title="${num}">${num}</a>
+                    <a href="javascript:void(0);" onclick="goPage(${num}); return false;" class="${pagination.currentPageNo == num ? 'on' : ''}">${num}</a>
                 </li>
             </c:forEach>
             <c:if test="${pagination.xnext}">
-                <!-- 다음 페이지로 이동 -->
                 <li class="next">
                     <a href="javascript:void(0);" onclick="goPage(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a>
                 </li>
@@ -105,7 +100,7 @@
                     <a href="javascript:void(0);" onclick="goPage(${pagination.realEnd}); return false;">끝</a>
                 </li>
             </c:if>
-        </ol>
+        </ul>
     </div>
 </div>
 <script>
@@ -131,9 +126,91 @@
             $(".post-checkbox").prop("checked", !isActive);
             $(this).toggleClass("active");
         });
+
+        // 페이지 이동 함수
+        function goPage(pageNo) {
+            submitObj.pageIndex = pageNo; // 현재 페이지 업데이트
+            console.log("goPage 호출:", pageNo);
+            loadPostList(); // 데이터 다시 로드
+        }
+
+        // 게시글 목록 로드 함수
+        function loadPostList() {
+            console.log("loadPostList 호출:", submitObj);
+
+            $.ajax({
+                url: "/post/list/json", // 서버에서 데이터 가져오는 엔드포인트
+                type: "GET",
+                data: submitObj, // 현재 페이지와 페이지 단위 전달
+                dataType: "json",
+                success: function (response) {
+                    console.log("서버 응답:", response);
+                    updatePostList(response.postList); // 게시글 리스트 업데이트
+                    updatePagination(response.pagination); // 페이지네이션 업데이트
+                },
+                error: function (xhr, status, error) {
+                    alert("데이터 로딩 중 오류 발생");
+                    console.error("오류 발생:", error);
+                }
+            });
+        }
+
+        // 게시글 리스트 업데이트 함수
+        function updatePostList(postList) {
+            console.log("updatePostList 호출:", postList);
+
+            let content = '';
+            postList.forEach(post => {
+                const formattedDate = new Date(post.postDate).toLocaleDateString(); // 날짜 포맷팅
+                content += `
+            <tr>
+                <td class="td-num">${post.id}</td>
+                <td class="td-title">
+                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?id=${post.id}">
+                            ${post.postTitle}
+                    </a>
+                </td>
+                <td class="td-name">${post.memberName}</td>
+                <td class="td-date"><fmt:formatDate value="${post.postDate}" pattern="yyyy-MM-dd" /></td>
+                <td class="td-view">${post.viewCount}</td>
+                <td class="td-comment">${post.commentCount}</td>
+            </tr>
+            `;
+            });
+
+
+            const postListContainer = document.getElementById('post-list');
+            if (postListContainer) {
+                postListContainer.innerHTML = content;
+            }
+        }
+
+        function updatePagination(pagination) {
+            const $pagination = $(".pagination");
+            $pagination.empty();
+
+            for (let i = 1; i <= pagination.realEnd; i++) {
+                const activeClass = (i === pagination.currentPageNo) ? "active" : "";
+                $pagination.append(`
+            <button class="pagination-button ${activeClass}" data-page="${i}">
+                ${i}
+            </button>
+        `);
+            }
+
+            $(".pagination-button").on("click", function () {
+                const pageIndex = $(this).data("page");
+                loadPostList(pageIndex);
+            });
+        }
+
+        window.goPage = goPage;
+
+        // 초기 게시글 목록 로드
+        loadPostList();
     });
 </script>
-<script src="${pageContext.request.contextPath}/resources/js/post.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/page.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
 </body>
 </html>

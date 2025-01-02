@@ -83,7 +83,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="${pageContext.request.contextPath}/resources/js/post.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/comment.js"></script>
 </body>
 </html>

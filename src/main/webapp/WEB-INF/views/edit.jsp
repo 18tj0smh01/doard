@@ -56,7 +56,7 @@
 </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="${pageContext.request.contextPath}/resources/js/post.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
 <%--<script>--%>
 <%--    $("button.ok-button").on("click", function () {--%>
 <%--        $("form[name='form']").submit();--%>
