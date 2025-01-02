@@ -1,89 +1,63 @@
 $(document).ready(function () {
+    let submitObj = {
+        pageIndex: 1,
+        pageUnit: 10,
+    };
 
     function goPage(pageNo) {
-        const submitObj = {
-            pageIndex: pageNo,
-            searchWrd: $("#searchWrd").val()
-        };
+        submitObj.pageIndex = pageNo;
+        console.log("goPage called with pageNo:", pageNo);
+        console.log("submitObj:", submitObj);
 
         $.ajax({
-            url: "/list", // API 엔드포인트
+            url: "/post/list",
             type: "POST",
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify(submitObj),
             dataType: "json",
-            progress: true
         })
             .done(function (data) {
-                renderList(data.resultList, data.searchVO); // 결과 리스트 렌더링
-                renderPagination(data.searchVO); // 페이징 네비게이션 렌더링
+                console.log("Response from server:", data);
+                renderList(data.postList);
+                renderPagination(data.pagination);
             })
-            .fail(function () {
-                alert("검색에 실패하였습니다.");
+            .fail(function (xhr, status, error) {
+                console.error("Error occurred:", error);
+                console.error("Response status:", status);
+                console.error("XHR object:", xhr);
+                alert("페이지 로딩 중 오류가 발생했습니다.");
             });
     }
 
-    // 결과 리스트 렌더링
-    function renderList(resultList, searchVO) {
-        const recordCountPerPage = searchVO.recordCountPerPage;
-        const pageIndex = searchVO.pageIndex;
-        let ii = (searchVO.resultCnt - (pageIndex - 1) * recordCountPerPage);
-
-        let content = resultList.map(value => `
-            <tr class="memList">
-                <td class="t_c">${ii--}</td>
-                <td class="t_c">${value.me_sido}</td>
-                <td>${value.me_gugun}<button type="button" class="btnInfo fr"></button></td>
-                <td class="t_c">${value.me_biz_name}</td>
-                <td class="t_c">${value.me_name}</td>
-                <td class="t_c">${value.me_biz_tel}</td>
+    function renderList(postList) {
+        console.log("renderList called with postList:", postList);
+        let content = postList.map(post => `
+            <tr>
+                <td>${post.id}</td>
+                <td>${post.postTitle}</td>
+                <td>${post.memberName}</td>
+                <td>${post.postDate}</td>
+                <td>${post.viewCount}</td>
+                <td>${post.commentCount}</td>
             </tr>`).join("");
-
-        $(".listData").html(content);
+        $("#post-list").html(content);
     }
 
-    // 페이징 네비게이션 렌더링
-    function renderPagination(searchVO) {
-        const { prev, next, startDate, endDate, pageIndex, realEnd } = searchVO;
-        const startButtonDate = startDate - 1;
-        const endButtonDate = endDate + 1;
+    function renderPagination(pagination) {
+        console.log("renderPagination called with pagination:", pagination);
+        const { currentPageNo, realEnd, totalPageCount } = pagination;
 
-        let pagination = `
-            <input type="hidden" id="pageIndex" name="pageIndex" value="${pageIndex}">
-            <ol class="pagination" id="pagination">`;
-
-        // 이전 버튼
-        if (prev) {
-            pagination += `
-                <li class="prev_end"><a href="javascript:void(0);" onclick="goPage(1); return false;"></a></li>
-                <li class="prev"><a href="javascript:void(0);" onclick="goPage(${startButtonDate}); return false;"></a></li>`;
+        let paginationContent = '<ol class="pagination">';
+        for (let i = 1; i <= totalPageCount; i++) {
+            paginationContent += `
+                <li>
+                    <a href="javascript:void(0);" onclick="goPage(${i});" 
+                        class="${i === currentPageNo ? 'active' : ''}">${i}</a>
+                </li>`;
         }
-
-        // 페이지 번호
-        for (let num = startDate; num <= endDate; num++) {
-            if (num === pageIndex) {
-                pagination += `<li><a href="javascript:void(0);" onclick="goPage(${num}); return false;" class="num on">${num}</a></li>`;
-            } else {
-                pagination += `<li><a href="javascript:void(0);" onclick="goPage(${num}); return false;" class="num">${num}</a></li>`;
-            }
-        }
-
-        // 다음 버튼
-        if (next) {
-            pagination += `
-                <li class="next"><a href="javascript:void(0);" onclick="goPage(${endButtonDate}); return false;"></a></li>
-                <li class="next_end"><a href="javascript:void(0);" onclick="goPage(${realEnd}); return false;"></a></li>`;
-        }
-
-        pagination += `</ol>`;
-        $(".board-list-paging").html(pagination);
+        paginationContent += '</ol>';
+        $(".pagination-container").html(paginationContent);
     }
 
-    // 초기 페이지 로드
-    goPage(1); // 페이지 로드 시 1페이지를 기본으로 요청
-
-    // 검색 버튼 이벤트 처리
-    $("#searchBtn").on("click", function () {
-        goPage(1); // 검색 시 첫 페이지로 이동
-    });
+    goPage(1);
 });

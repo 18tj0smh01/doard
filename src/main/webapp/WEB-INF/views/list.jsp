@@ -10,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>테스트 게시판</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
@@ -107,8 +108,11 @@
         </ol>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script>
+    let submitObj = {
+        pageIndex: 1,
+        pageUnit: 10
+    };
     const path = "<%= request.getContextPath() %>";
 </script>
 <script>
@@ -130,5 +134,6 @@
     });
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/post.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/page.js"></script>
 </body>
 </html>
