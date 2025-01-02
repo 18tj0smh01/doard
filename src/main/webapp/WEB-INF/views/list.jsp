@@ -8,7 +8,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>테스트 게시판</title>
+    <title>테스트트 게시판</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
@@ -79,27 +79,6 @@
     <!-- 페이징 -->
     <div class="board-list-paging fr">
         <ul class="pagination" id="pagination">
-            <c:if test="${pagination.xprev}">
-                <li class="prev_end">
-                    <a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a>
-                </li>
-                <li class="prev">
-                    <a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a>
-                </li>
-            </c:if>
-            <c:forEach var="num" begin="${pagination.firstPageNoOnPageList}" end="${pagination.lastPageNoOnPageList}">
-                <li>
-                    <a href="javascript:void(0);" onclick="goPage(${num}); return false;" class="${pagination.currentPageNo == num ? 'on' : ''}">${num}</a>
-                </li>
-            </c:forEach>
-            <c:if test="${pagination.xnext}">
-                <li class="next">
-                    <a href="javascript:void(0);" onclick="goPage(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a>
-                </li>
-                <li class="next_end">
-                    <a href="javascript:void(0);" onclick="goPage(${pagination.realEnd}); return false;">끝</a>
-                </li>
-            </c:if>
         </ul>
     </div>
 </div>
@@ -108,40 +87,25 @@
         pageIndex: 1,
         pageUnit: 10
     };
+
     const path = "<%= request.getContextPath() %>";
-</script>
-<script>
+
     $(document).ready(function () {
-        // 선택 모드 토글
-        $("#toggle-checkbox").on("click", function () {
-            const isActive = $(this).hasClass("active");
-            $("#post-table").toggleClass("show-checkbox", !isActive);
-            $(".check-all").toggle(!isActive);
-            $(this).toggleClass("active");
-        });
+        // 페이지 이동 함수 (글로벌 스코프 등록)
+        window.goPage = function (pageNum) {
+            submitObj.pageIndex = pageNum;
+            console.log("goPage 호출:", pageNum);
+            loadPostList();
+        };
 
-        // 전체 선택 기능
-        $("#select-all").on("click", function () {
-            const isActive = $(this).hasClass("active");
-            $(".post-checkbox").prop("checked", !isActive);
-            $(this).toggleClass("active");
-        });
-
-        // 페이지 이동 함수
-        function goPage(pageNo) {
-            submitObj.pageIndex = pageNo; // 현재 페이지 업데이트
-            console.log("goPage 호출:", pageNo);
-            loadPostList(); // 데이터 다시 로드
-        }
-
-        // 게시글 목록 로드 함수
+        // 게시글 목록 로드
         function loadPostList() {
             console.log("loadPostList 호출:", submitObj);
 
             $.ajax({
                 url: "/post/list/json", // 서버에서 데이터 가져오는 엔드포인트
                 type: "GET",
-                data: submitObj, // 현재 페이지와 페이지 단위 전달
+                data: submitObj, // 페이지 단위 전달
                 dataType: "json",
                 success: function (response) {
                     console.log("서버 응답:", response);
@@ -155,61 +119,64 @@
             });
         }
 
-        // 게시글 리스트 업데이트 함수
+        // 게시글 리스트
         function updatePostList(postList) {
             console.log("updatePostList 호출:", postList);
 
             let content = '';
             postList.forEach(post => {
-                const formattedDate = new Date(post.postDate).toLocaleDateString(); // 날짜 포맷팅
-                content += `
-            <tr>
-                <td class="td-num">${post.id}</td>
-                <td class="td-title">
-                    <a draggable="false" href="${pageContext.request.contextPath}/post/detail?id=${post.id}">
-                            ${post.postTitle}
-                    </a>
-                </td>
-                <td class="td-name">${post.memberName}</td>
-                <td class="td-date"><fmt:formatDate value="${post.postDate}" pattern="yyyy-MM-dd" /></td>
-                <td class="td-view">${post.viewCount}</td>
-                <td class="td-comment">${post.commentCount}</td>
-            </tr>
-            `;
+                content += '<tr>';
+                content += '<td>' + post.id + '</td>';
+                content += '<td><a href="/post/detail?id=' + post.id + '">' + post.postTitle + '</a></td>';
+                content += '<td>' + post.memberName + '</td>';
+                content += '<td>' + post.postDate + '</td>';
+                content += '<td>' + post.viewCount + '</td>';
+                content += '<td>' + post.commentCount + '</td>';
+                content += '</tr>';
             });
 
-
-            const postListContainer = document.getElementById('post-list');
-            if (postListContainer) {
-                postListContainer.innerHTML = content;
-            }
+            $("#post-list").html(content);
         }
 
+        // 페이지네이션 업데이트
         function updatePagination(pagination) {
-            const $pagination = $(".pagination");
-            $pagination.empty();
+            console.log("updatePagination 호출:", pagination);
 
-            for (let i = 1; i <= pagination.realEnd; i++) {
-                const activeClass = (i === pagination.currentPageNo) ? "active" : "";
-                $pagination.append(`
-            <button class="pagination-button ${activeClass}" data-page="${i}">
-                ${i}
-            </button>
-        `);
+            let content = '<ol class="pagination" id="pagination">';
+            if (pagination.xprev) {
+                content += `<li class="prev_end"><a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a></li>`;
+                content += `<li class="prev"><a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a></li>`;
             }
+            for (let pageNum = pagination.firstPageNoOnPageList; pageNum <= pagination.lastPageNoOnPageList; pageNum++) {
+                console.log("PageNum 확인:", pageNum);
+                if (!isNaN(pageNum) && pageNum !== undefined) {
+                    content += `<li><a href="javascript:void(0);" onclick="goPage(`+ pageNum +`); return false;" class="pageNum ${pagination.currentPageNo == pageNum ? 'on' : ''}">`+pageNum+`</a></li>`;
+                } else {
+                    console.error("유효하지 않은 PageNum 값:", pageNum);
+                }
+            }
+            if (pagination.xnext) {
+                console.log("lastPageNoOnPageList 확인:", pagination.lastPageNoOnPageList);
+                content += `<li class="next"><a href="javascript:void(0);" onclick="goPage(`+pagination.lastPageNoOnPageList + 1+`); return false;">다음</a></li>`;
+                content += `<li class="next_end"><a href="javascript:void(0);" onclick="goPage(`+pagination.realEnd+`); return false;">끝</a></li>`;
+            }
+            content += '</ol>';
 
-            $(".pagination-button").on("click", function () {
-                const pageIndex = $(this).data("page");
-                loadPostList(pageIndex);
-            });
+            console.log("생성된 Pagination HTML:", content);
+            $(".board-list-paging").html(content);
         }
 
-        window.goPage = goPage;
+        $(document).on("click", ".pagination .pageNum", function () {
+            const pageNum = $(this).text().trim();
+            console.log("클릭된 페이지 번호:", pageNum);
+            goPage(parseInt(pageNum, 10));
+        });
 
         // 초기 게시글 목록 로드
         loadPostList();
     });
 </script>
+
 <script src="${pageContext.request.contextPath}/resources/js/page.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
 </body>

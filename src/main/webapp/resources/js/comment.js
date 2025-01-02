@@ -65,8 +65,8 @@ $(document).ready(function () {
                                 <button type="submit" class="comment-submit">등록</button>
                             </div>
                         </div>
-                             <div class="replies-container">
-                                  ${renderReplies(comment.replies)}
+                             <div class="replies-container" id="reply-list">
+                                  
                              </div>
                     </div>
                     `);
@@ -102,7 +102,8 @@ $(document).ready(function () {
             </div>
         `;
                 });
-                return replyHTML;
+                // return replyHTML;
+                $("#reply-list").html(content);
             }
         });
     }

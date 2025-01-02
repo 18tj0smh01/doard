@@ -227,16 +227,16 @@ td {
     background-color: rgb(44, 157, 255);
     color: #fff;
 }
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-.pagination li {
-    margin: 0 5px;
-}
-.pagination li a.active {
-    color: white;
-    background-color: #007bff;
-    border-radius: 5px;
-}
+/*.pagination {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    margin-top: 10px;*/
+/*}*/
+/*.pagination li {*/
+/*    margin: 0 5px;*/
+/*}*/
+/*.pagination li a.active {*/
+/*    color: white;*/
+/*    background-color: #007bff;*/
+/*    border-radius: 5px;*/
+/*}*/

@@ -3,9 +3,9 @@ $(document).ready(function () {
         pageIndex: 1,
         pageUnit: 10
     };
-    function goPage(pageNo) {
-        submitObj.pageIndex = pageNo;
-        console.log("goPage called with pageNo:", pageNo);
+    function goPage(pageNum) {
+        submitObj.pageIndex = pageNum;
+        console.log("goPage called with pageNum:", pageNum);
         loadPostList();
     }
     function loadPostList() {
@@ -34,7 +34,7 @@ $(document).ready(function () {
     });
 
     function updatePostList(postList) {
-        console.log("updatePostList called with postList:", postList);
+        console.log("updatePostList:", postList);
         let content = '';
         $.each(postList, function (index, post) {
             content += `
@@ -51,14 +51,14 @@ $(document).ready(function () {
     }
 
     function updatePagination(pagination) {
-        console.log("updatePagination called with pagination:", pagination);
+        console.log("updatePagination", pagination);
         let content = '<ol class="pagination" id="pagination">';
         if (pagination.xprev) {
             content += `<li class="prev_end"><a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a></li>`;
             content += `<li class="prev"><a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a></li>`;
         }
-        for (let num = pagination.firstPageNoOnPageList; num <= pagination.lastPageNoOnPageList; num++) {
-            content += `<li><a href="javascript:void(0);" onclick="goPage(${num}); return false;" class="num ${pagination.currentPageNo == num ? 'on' : ''}">${num}</a></li>`;
+        for (let pageNum = pagination.firstPageNoOnPageList; pageNum <= pagination.lastPageNoOnPageList; pageNum++) {
+            content += `<li><a href="javascript:void(0);" onclick="goPage(${pageNum}); return false;" class="pageNum ${pagination.currentPageNo == pageNum ? 'on' : ''}">${pageNum}</a></li>`;
         }
         if (pagination.xnext) {
             content += `<li class="next"><a href="javascript:void(0);" onclick="goPage(${pagination.lastPageNoOnPageList + 1}); return false;">다음</a></li>`;
