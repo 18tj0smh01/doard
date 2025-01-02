@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,27 +42,43 @@ public class PostController {
     }
 
 //    게시글 리스트
-    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, Model model, Pagination pagination) {
-        Long memberId = (Long) session.getAttribute("id");
-        if (memberId == null) {
-            return new ModelAndView("redirect:/login");
-        }
+//    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+//    public ModelAndView list(@ModelAttribute("postVO") PostVO postVO, Model model, Pagination pagination) {
+//        Long memberId = (Long) session.getAttribute("id");
+//        if (memberId == null) {
+//            return new ModelAndView("redirect:/login");
+//        }
+//
+//        int totPostCnt = postService.getPostListCnt();
+//        Pagination postPagination = initializePagination(postVO.getPageIndex(), postVO.getPageUnit(), postVO.getPageSize(), totPostCnt);
+//
+//        List<PostVO> postList = postMapper.selectPostList(postPagination);
+//
+//        model.addAttribute("totPostCnt", totPostCnt);
+//        model.addAttribute("totalPageCnt", (int) Math.ceil(totPostCnt / (double) postPagination.getRecordCountPerPage()));
+//        model.addAttribute("pagination", postPagination);
+//
+//        logger.debug("Post list retrieved. Total posts: {}, Current page: {}", totPostCnt, postPagination.getCurrentPageNo());
+//
+//        return new ModelAndView("list", "postList", postList);
+//    }
 
-        int totPostCnt = postService.getPostListCnt();
-        Pagination postPagination = initializePagination(postVO.getPageIndex(), postVO.getPageUnit(), postVO.getPageSize(), totPostCnt);
+    @GetMapping("/list")
+    public ResponseEntity<Map<String, Object>> getPostList(
+            @RequestParam(defaultValue = "1") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageUnit) {
 
-        List<PostVO> postList = postMapper.selectPostList(postPagination);
+        int totalPostCount = postService.getPostListCnt();
+        Pagination pagination = initializePagination(pageIndex, pageUnit, 10, totalPostCount);
+        List<PostVO> postList = postMapper.selectPostList(pagination);
 
-        model.addAttribute("totPostCnt", totPostCnt);
-        model.addAttribute("totalPageCnt", (int) Math.ceil(totPostCnt / (double) postPagination.getRecordCountPerPage()));
-        model.addAttribute("pagination", postPagination);
+        Map<String, Object> response = new HashMap<>();
+        response.put("postList", postList);
+        response.put("pagination", pagination);
 
-        logger.debug("Post list retrieved. Total posts: {}, Current page: {}", totPostCnt, postPagination.getCurrentPageNo());
-
-        return new ModelAndView("list", "postList", postList);
+        return ResponseEntity.ok(response);
     }
-    
+
 //    게시글 작성
     @GetMapping("/write")
     public ModelAndView gotoWrite(Model model) {
@@ -241,6 +258,14 @@ public class PostController {
         pagination.setPageSize(pageSize > 0 ? pageSize : 10);
         pagination.setFirstRecordIndex((pagination.getCurrentPageNo() - 1) * pagination.getRecordCountPerPage());
         pagination.setTotalRecordCount(totalRecordCount);
+
+        int realEnd = (int) Math.ceil((double) totalRecordCount / pagination.getRecordCountPerPage());
+        pagination.setRealEnd(realEnd);
+
+        pagination.setXprev(pagination.getCurrentPageNo() > 1);
+        pagination.setXnext(pagination.getCurrentPageNo() < realEnd);
+
         return pagination;
     }
+
 }
