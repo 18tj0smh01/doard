@@ -2,57 +2,56 @@ package com.example.board.demo.domain;
 
 public class PageVO {
 
-    private int pageIndex = 1;				    //현재페이지
-    private int pageUnit = 10;				    //페이지갯수
-    private int pageSize = 10;	    			//페이지사이즈
-    private int firstIndex = 1;		    		//firstIndex
-    private int recordCountPerPage = 10;		//recordCountPerPage
-    private int totCnt = 0;				      	//총갯수
-    private int startDate = 0;			    	//시작데이터
-    private int endDate = 0;				    //종료데이터
-    private int realEnd = 0;				    //페이징 마지막 숫자
+    private Integer pageIndex = 1;              // 현재 페이지
+    private Integer pageUnit = 10;             // 페이지 갯수
+    private Integer pageSize = 10;             // 페이지 사이즈
+    private Integer firstIndex = 1;            // firstIndex
+    private Integer recordCountPerPage = 10;   // recordCountPerPage
+    private Integer totCnt = 0;                // 총 갯수
+    private Integer startDate = 0;             // 시작 데이터
+    private Integer endDate = 0;               // 종료 데이터
+    private Integer realEnd = 0;               // 페이징 마지막 숫자
 
-    private boolean prev, next;	    			//이전,다음버튼
+    private boolean prev, next;                // 이전, 다음 버튼
 
-
-    //getter&setter
-    public int getPageIndex() {
+    // Getter & Setter
+    public Integer getPageIndex() {
         return pageIndex;
     }
 
-    public void setPageIndex(int pageIndex) {
+    public void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
     }
 
-    public int getPageUnit() {
+    public Integer getPageUnit() {
         return pageUnit;
     }
 
-    public void setPageUnit(int pageUnit) {
+    public void setPageUnit(Integer pageUnit) {
         this.pageUnit = pageUnit;
     }
 
-    public int getPageSize() {
+    public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(int pageSize) {
+    public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
 
-    public int getFirstIndex() {
+    public Integer getFirstIndex() {
         return firstIndex;
     }
 
-    public void setFirstIndex(int firstIndex) {
+    public void setFirstIndex(Integer firstIndex) {
         this.firstIndex = firstIndex;
     }
 
-    public int getRecordCountPerPage() {
+    public Integer getRecordCountPerPage() {
         return recordCountPerPage;
     }
 
-    public void setRecordCountPerPage(int recordCountPerPage) {
+    public void setRecordCountPerPage(Integer recordCountPerPage) {
         this.recordCountPerPage = recordCountPerPage;
     }
 
@@ -72,36 +71,35 @@ public class PageVO {
         this.next = next;
     }
 
-    public int getTotCnt() {
+    public Integer getTotCnt() {
         return totCnt;
     }
 
-    public void setTotCnt(int totCnt) {
+    public void setTotCnt(Integer totCnt) {
         this.totCnt = totCnt;
     }
 
-    public int getStartDate() {
+    public Integer getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(int startDate) {
+    public void setStartDate(Integer startDate) {
         this.startDate = startDate;
     }
 
-    public int getEndDate() {
+    public Integer getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(int endDate) {
+    public void setEndDate(Integer endDate) {
         this.endDate = endDate;
     }
 
-    public int getRealEnd() {
+    public Integer getRealEnd() {
         return realEnd;
     }
 
-    public void setRealEnd(int realEnd) {
+    public void setRealEnd(Integer realEnd) {
         this.realEnd = realEnd;
     }
-
 }

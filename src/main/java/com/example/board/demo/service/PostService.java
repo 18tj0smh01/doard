@@ -8,6 +8,7 @@ import com.example.board.demo.mapper.PostMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,5 +160,15 @@ public class PostService {
         response.put("totalPages", totalPages);
         response.put("totalCount", totalCount);
         return response;
+    }
+
+    public List<PostVO> getPaginatedPostList(Pagination postPagination) {
+        if (postPagination == null) {
+            throw new IllegalArgumentException("Pagination object cannot be null");
+        }
+
+        List<PostVO> postList = postMapper.selectPostList(postPagination);
+
+        return postList != null ? postList : new ArrayList<>();
     }
 }
