@@ -1,21 +1,16 @@
 $(document).ready(function () {
-    // 페이지 로드 시 댓글 자동 로드
-    const postId = $("#postId").val(); // 숨겨진 필드에서 postId를 가져옴
+    const postId = $("#postId").val();
+
     if (postId) {
         loadComments(postId);
     }
 
     // 댓글 작성
     $("#commentSubmit").click(function () {
-        const commentContent = $("#commentContent").val()?.trim() || ""; // 수정: 기본값을 빈 문자열로 설정
+        const commentContent = $("#commentContent").val()?.trim() || "";
 
-        if (!postId) {
-            alert("게시글 ID를 찾을 수 없습니다.");
-            return;
-        }
-
-        if (!commentContent) {
-            alert("댓글 내용을 입력하세요.");
+        if (!postId || !commentContent) {
+            alert(postId ? "댓글 내용을 입력하세요." : "게시글 ID를 찾을 수 없습니다.");
             return;
         }
 
@@ -23,104 +18,99 @@ $(document).ready(function () {
             url: `/comment/writeComment`,
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ postId: postId, commentContent: commentContent }),
+            data: JSON.stringify({ postId, commentContent }),
             success: function () {
-                alert("댓글이 등록되었습니다.");
-                $("#commentContent").val(""); // 입력창 초기화
-                loadComments(postId); // 댓글 목록 갱신
+                $("#commentContent").val("");
+                loadComments(postId);
             },
-            error: function (xhr, status, error) {
+            error: function (xhr) {
                 alert("댓글 등록 중 오류가 발생했습니다.");
-                console.error(error);
-            }
+                console.error(xhr.responseText);
+            },
         });
     });
+
 
     // 댓글 목록 불러오기
     function loadComments(postId) {
         $.ajax({
             url: `/comment/detail/${postId}/1`,
             type: "GET",
-            success: function (response) {
+            success: function (comments) {
                 const commentContainer = $("#comment-container");
                 commentContainer.empty();
 
-                response.forEach(function (comment) {
-                    commentContainer.append(`
-                    <div class="comment-info" data-comment-id="${comment.id}">
-                        <div class="comment-userName">${comment.memberName}</div>
-                        <div class="comment-content">${comment.commentContent}</div>
-                        <section class="order">
-                            <a data-id="${comment.id}" class="edit editComment">수정</a>
-                            <a data-id="${comment.id}" class="delete deleteComment">삭제</a>
-                        </section>
-                        <div class="comment-footer">
-                            <div class="comment-date">${comment.commentDate}</div>
-                            <button type="button" class="reply-button">답글 쓰기</button>
-                        </div>
-                        <div class="reply-box" style="display: none;">
-                            <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요"></textarea>
-                            <div class="comment-footer">
-                                <button type="button" class="comment-cancel">취소</button>
-                                <button type="submit" class="comment-submit">등록</button>
-                            </div>
-                        </div>
-                             <div class="replies-container" id="reply-list">
-                                  
-                             </div>
-                    </div>
-                    `);
+                comments.forEach(function (comment) {
+                    const commentHTML = renderComment(comment);
+                    commentContainer.append(commentHTML);
                 });
             },
-            error: function (xhr, status, error) {
-                console.error("Error loading comments:", xhr.responseText || error);
+            error: function (xhr) {
                 alert("댓글 목록을 불러오는 중 오류가 발생했습니다.");
-            }
+                console.error(xhr.responseText);
+            },
         });
     }
 
-    // 대댓글
-    function renderReplies(replies) {
-        $.ajax({
-            url: `/comment/detail/${postId}/1`,
-            type: "GET",
-            success: function (response) {
-                const replyContainer = $("#replies-container");
-                if (!replies || replies.length === 0) return "";
+    // 댓글 렌더링 함수
+    function renderComment(comment) {
+        let repliesHTML = "";
 
-                let replyHTML = "";
+        // 대댓글 렌더링
+        if (comment.replies && comment.replies.length > 0) {
+            comment.replies.forEach(function (reply) {
+                repliesHTML += renderReply(reply);
+            });
+        }
 
-                replies.forEach(function (reply) {
-                    replyHTML += `
-            <div class="comment-reply" data-comment-id="${reply.id}">
-                <div class="reply-userName">${reply.memberName}</div>
-                <div class="reply-content">${reply.commentContent}</div>
-                <div class="reply-footer">
-                    <div class="reply-date">${reply.commentDate}</div>
-                    <button type="button" class="reply-to-reply-button">답글 쓰기</button>
+        return `
+            <div class="comment-info" data-comment-id="${comment.id}">
+                <div class="comment-header">
+                    <span class="comment-userName">${comment.memberName}</span>
+                    <span class="comment-date">${comment.commentDate}</span>
+                </div>
+                <div class="comment-content">${comment.commentContent}</div>
+                <section class="order">
+                    <a data-id="${comment.id}" class="edit editComment">수정</a>
+                    <a data-id="${comment.id}" class="delete deleteComment">삭제</a>
+                </section>
+                <button type="button" class="reply-button">답글 쓰기</button>
+                <div class="reply-box" style="display: none;">
+                    <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요"></textarea>
+                    <button type="button" class="comment-cancel">취소</button>
+                    <button type="submit" class="comment-submit">등록</button>
+                </div>
+                <div class="replies-container">
+                    ${repliesHTML}
                 </div>
             </div>
         `;
-                });
-                // return replyHTML;
-                $("#reply-list").html(content);
-            }
-        });
     }
 
-    // 답글 버튼 이벤트
+    // 대댓글 렌더링 함수
+    function renderReply(reply) {
+        return `
+            <div class="comment-reply" data-comment-id="${reply.id}">
+                <div class="reply-header">
+                    <span class="reply-userName">${reply.memberName}</span>
+                    <span class="reply-date">${reply.commentDate}</span>
+                </div>
+                <div class="reply-content">${reply.commentContent}</div>
+                <section class="order">
+                    <button  data-id="${reply.id}" class="edit editComment">수정</a>
+                    <button  data-id="${reply.id}" class="delete deleteComment">삭제</a>
+                </section>
+            </div>
+        `;
+    }
+
+    // 답글 버튼 클릭 이벤트
     $(document).on("click", ".reply-button", function () {
         const replyBox = $(this).closest(".comment-info").find(".reply-box");
         replyBox.toggle();
     });
 
-    // 답글 취소 버튼 이벤트
-    $(document).on("click", ".comment-cancel", function () {
-        const replyBox = $(this).closest(".reply-box");
-        replyBox.hide();
-    });
-
-    // 답글 등록 버튼 이벤트
+    // 답글 등록
     $(document).on("click", ".comment-submit", function () {
         const replyBox = $(this).closest(".reply-box");
         const replyContent = replyBox.find(".comment-input").val().trim();
@@ -135,43 +125,41 @@ $(document).ready(function () {
             url: `/comment/writeReply`,
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ postId: postId, parentCommentId: parentCommentId, commentContent: replyContent }),
+            data: JSON.stringify({ postId, parentCommentId, commentContent: replyContent }),
             success: function () {
-                alert("답글이 등록되었습니다.");
                 loadComments(postId);
             },
-            error: function (xhr, status, error) {
+            error: function (xhr) {
                 alert("답글 등록 중 오류가 발생했습니다.");
-                console.error(error);
-            }
+                console.error(xhr.responseText);
+            },
         });
     });
 
-    // 댓글 삭제 버튼 이벤트
+    // 댓글 삭제
     $(document).on("click", ".deleteComment", function () {
         const commentId = $(this).data("id");
 
-        if (!commentId) {
-            alert("삭제할 댓글 ID를 찾을 수 없습니다.");
-            return;
-        }
-
-        if (!confirm("댓글을 삭제하시겠습니까?")) {
-            return;
-        }
+        if (!confirm("댓글을 삭제하시겠습니까?")) return;
 
         $.ajax({
             url: `/comment/delete/${commentId}`,
             type: "DELETE",
             success: function () {
-                alert("댓글이 삭제되었습니다.");
                 loadComments(postId);
             },
-            error: function (xhr, status, error) {
-                alert("댓글 삭제에 실패했습니다.");
-                console.error(error);
-            }
+            error: function (xhr) {
+                alert("댓글 삭제 중 오류가 발생했습니다.");
+                console.error(xhr.responseText);
+            },
         });
+    });
+
+
+    // 답글 취소
+    $(document).on("click", ".comment-cancel", function () {
+        const replyBox = $(this).closest(".reply-box");
+        replyBox.hide();
     });
 
     // 댓글 수정 버튼 이벤트

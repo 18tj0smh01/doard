@@ -58,10 +58,16 @@ public class CommentController {
     }
 
     // 댓글 목록 조회
+//    @GetMapping("/detail/{postId}/{page}")
+//    public ResponseEntity<List<CommentVO>> list(@PathVariable Long postId, @PathVariable Integer page) {
+//        List<CommentVO> comments = postService.selectPostComment(postId);
+//        return new ResponseEntity<>(comments, HttpStatus.OK);
+//    }
+
     @GetMapping("/detail/{postId}/{page}")
-    public ResponseEntity<List<CommentVO>> list(@PathVariable Long postId, @PathVariable Integer page) {
+    public ResponseEntity<List<CommentVO>> selectPostComment(@PathVariable Long postId) {
         List<CommentVO> comments = postService.selectPostComment(postId);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
+        return ResponseEntity.ok(comments);
     }
 
     // 댓글 삭제

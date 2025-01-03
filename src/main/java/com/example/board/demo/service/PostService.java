@@ -132,8 +132,32 @@ public class PostService {
 
 
     // 게시글에 대한 댓글 리스트 조회
-    public List<CommentVO> selectPostComment(Long postId){
-        return commentMapper.selectPostComment(postId);
+//    public List<CommentVO> selectPostComment(Long postId){
+//        return commentMapper.selectPostComment(postId);
+//    }
+    public List<CommentVO> selectPostComment(Long postId) {
+        // 댓글과 대댓글 모두 조회
+        List<CommentVO> allComments = commentMapper.selectPostComment(postId);
+
+        // 댓글과 대댓글을 분리
+        List<CommentVO> parentComments = new ArrayList<>();
+        Map<Long, CommentVO> commentMap = new HashMap<>();
+
+        for (CommentVO comment : allComments) {
+            if (comment.getCommentDepth() == 0) {
+                // 댓글 (depth = 0)
+                parentComments.add(comment);
+                commentMap.put(comment.getId(), comment);
+            } else {
+                // 대댓글 (depth > 0)
+                CommentVO parentComment = commentMap.get(comment.getParentCommentId());
+                if (parentComment != null) {
+                    parentComment.getReplies().add(comment);
+                }
+            }
+        }
+
+        return parentComments;
     }
 
     public int getComListCnt() {

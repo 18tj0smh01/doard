@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Data
@@ -22,6 +25,12 @@ public class CommentVO extends PageVO {
     private Long postId;
     private Long parentCommentId;        // 부모 댓글 ID (NULL이면 일반 댓글)
     private int commentDepth;            // 댓글 깊이 (0: 댓글, 1 이상: 대댓글)
+    private List<CommentVO> replies = new ArrayList<>();
+
+    public List<CommentVO> getReplies() {
+        return replies;
+    }
+    public void setReplies(List<CommentVO> replies) { this.replies = replies; }
 
     public Long getId() {
         return id;
