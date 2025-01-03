@@ -12,4 +12,6 @@ public interface MemberMapper {
 
     // 회원 조회
     MemberVO findById(Long id);
+
+    MemberVO signUp(MemberVO member);
 }

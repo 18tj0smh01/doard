@@ -28,4 +28,9 @@ public class MemberService {
     public Optional<Long> login(String memberId, String memberPassword) {
         return Optional.ofNullable(memberMapper.login(memberId, memberPassword));
     }
+
+    public MemberVO signUp(MemberVO memberVO) {
+        memberMapper.signUp(memberVO);
+        return memberVO;
+    }
 }

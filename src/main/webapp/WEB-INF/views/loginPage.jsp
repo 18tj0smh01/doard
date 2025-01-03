@@ -26,8 +26,8 @@
 		<div class="col-lg-4"></div>
 		<div class="col-lg-4">
 			<div class="jumbotron" style="padding-top: 20px;">
+				<div class="login-box">
 				<form method="post" name="login" action="${pageContext.request.contextPath}/login">
-					<h3 style="text-align: center;">로그인 화면</h3>
 					<div class="form-group">
 						<input type="text" class="form-control"  value="${memberVO.memberId}" placeholder="아이디" name="memberId" maxlength="20">
 					</div>
@@ -36,6 +36,10 @@
 					</div>
 					<input type="submit" class="btn btn-primary form-control" value="로그인">
 				</form>
+					<div>
+						<button onclick="goToSignup()" >회원가입</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="col-lg-4"></div>
@@ -43,7 +47,10 @@
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="../../resources/js/bootstrap.js"></script>
 <script>
-
+	function goToSignup() {
+		const signup = "/signUp";
+		window.location.href = signup;
+	}
 </script>
 </body>
 </html>

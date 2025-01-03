@@ -38,7 +38,7 @@ public class PostService {
     // 게시글 생성
     @Transactional
     public PostVO createPost(PostVO postVO) {
-        int rowsAffected = postMapper.postUpload(postVO); // 게시글 삽입
+        int rowsAffected = postMapper.postUpload(postVO);
         if (rowsAffected == 0) {
             throw new RuntimeException("게시글 생성 실패");
         }
