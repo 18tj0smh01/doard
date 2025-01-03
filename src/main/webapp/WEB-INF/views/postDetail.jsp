@@ -80,10 +80,127 @@
             </div>
         </div>
     </div>
+    <!-- 글 목록 -->
+    <div>
+        <div> 최신글</div>
+    <table class="main-box" id="post-table">
+        <thead class="table-head">
+        <tr>
+            <th class="table-left td-num">번호</th>
+            <th class="td-title">제목</th>
+            <th class="table-right td-member">작성자</th>
+            <th class="table-right td-date">작성일</th>
+            <th class="table-right td-view">조회</th>
+            <th class="table-right td-comment">댓글</th>
+        </tr>
+        </thead>
+        <tbody class="list-box" id="post-list">
+        </tbody>
+    </table>
+    <!-- 페이징 -->
+    <div class="board-list-paging fr">
+        <ul class="pagination" id="pagination">
+        </ul>
+    </div>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/comment.js"></script>
+<script>
+    let submitObj = {
+    pageIndex: 1,
+    pageUnit: 5
+};
+
+    const path = "<%= request.getContextPath() %>";
+
+    $(document).ready(function () {
+    // 페이지 이동 함수 (글로벌 스코프 등록)
+    window.goPage = function (pageNum) {
+        submitObj.pageIndex = pageNum;
+        console.log("goPage 호출:", pageNum);
+        loadPostList();
+    };
+
+    // 게시글 목록 로드
+    function loadPostList() {
+    console.log("loadPostList 호출:", submitObj);
+
+    $.ajax({
+    url: "/post/list/json", // 서버에서 데이터 가져오는 엔드포인트
+    type: "GET",
+    data: submitObj, // 페이지 단위 전달
+    dataType: "json",
+    success: function (response) {
+    console.log("서버 응답:", response);
+    updatePostList(response.postList); // 게시글 리스트 업데이트
+    updatePagination(response.pagination); // 페이지네이션 업데이트
+},
+    error: function (xhr, status, error) {
+    alert("데이터 로딩 중 오류 발생");
+    console.error("오류 발생:", error);
+}
+});
+}
+
+    // 게시글 리스트
+    function updatePostList(postList) {
+    console.log("updatePostList 호출:", postList);
+
+    let content = '';
+    postList.forEach(post => {
+    content += '<tr>';
+    content += '<td>' + post.id + '</td>';
+    content += '<td><a href="/post/detail?id=' + post.id + '">' + post.postTitle + '</a></td>';
+    content += '<td>' + post.memberName + '</td>';
+    content += '<td>' + post.postDate + '</td>';
+    content += '<td>' + post.viewCount + '</td>';
+    content += '<td>' + post.commentCount + '</td>';
+    content += '</tr>';
+});
+
+    $("#post-list").html(content);
+}
+
+    // 페이지네이션 업데이트
+    function updatePagination(pagination) {
+    console.log("updatePagination 호출:", pagination);
+
+    let content = '<ol class="pagination" id="pagination">';
+    if (pagination.xprev) {
+    content += `<li class="prev_end"><a href="javascript:void(0);" onclick="goPage(1); return false;">처음</a></li>`;
+    content += `<li class="prev"><a href="javascript:void(0);" onclick="goPage(${pagination.firstPageNoOnPageList - 1}); return false;">이전</a></li>`;
+}
+    for (let pageNum = pagination.firstPageNoOnPageList; pageNum <= pagination.lastPageNoOnPageList; pageNum++) {
+    console.log("PageNum 확인:", pageNum);
+    if (!isNaN(pageNum) && pageNum !== undefined) {
+    content += `<li><a href="javascript:void(0);" onclick="goPage(`+ pageNum +`); return false;" class="pageNum ${pagination.currentPageNo == pageNum ? 'on' : ''}">`+pageNum+`</a></li>`;
+} else {
+    console.error("유효하지 않은 PageNum 값:", pageNum);
+}
+}
+    if (pagination.xnext) {
+    console.log("lastPageNoOnPageList 확인:", pagination.lastPageNoOnPageList);
+    content += `<li class="next"><a href="javascript:void(0);" onclick="goPage(`+pagination.lastPageNoOnPageList + 1+`); return false;">다음</a></li>`;
+    content += `<li class="next_end"><a href="javascript:void(0);" onclick="goPage(`+pagination.realEnd+`); return false;">끝</a></li>`;
+}
+    content += '</ol>';
+
+    console.log("생성된 Pagination HTML:", content);
+    $(".board-list-paging").html(content);
+}
+
+    $(document).on("click", ".pagination .pageNum", function () {
+    const pageNum = $(this).text().trim();
+    console.log("클릭된 페이지 번호:", pageNum);
+    goPage(parseInt(pageNum, 5));
+});
+
+    // 초기 게시글 목록 로드
+    loadPostList();
+});
+</script>
 </body>
 </html>

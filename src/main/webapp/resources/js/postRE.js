@@ -1,8 +1,8 @@
 $(document).ready(function () {
-    let submitObj = {
-        pageIndex: 1,
-        pageUnit: 10
-    };
+    // let submitObj = {
+    //     pageIndex: 1,
+    //     pageUnit: 10
+    // };
     function goPage(pageNum) {
         submitObj.pageIndex = pageNum;
         console.log("goPage called with pageNum:", pageNum);

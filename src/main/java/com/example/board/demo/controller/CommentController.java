@@ -33,7 +33,7 @@ public class CommentController {
         if (commentVO.getPostId() == null) {
             return new ResponseEntity<>("게시글 ID가 누락되었습니다.", HttpStatus.BAD_REQUEST);
         }
-
+        int updatedCommentCount = postService.getCommentCountByPostId(commentVO.getPostId());
         commentVO.setMemberId(loggedInMemberId);
         postService.uploadComment(commentVO);
         return new ResponseEntity<>(commentVO, HttpStatus.OK);

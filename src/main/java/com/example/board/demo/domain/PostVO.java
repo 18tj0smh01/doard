@@ -1,5 +1,6 @@
 package com.example.board.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -56,6 +57,7 @@ public class PostVO extends PageVO {
     }
 
     @JsonProperty("postDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date postDate;
 
     public Date getPostDate() {

@@ -30,10 +30,18 @@ public class PostService {
         return postMapper.selectPostList(pagination);
     }
 
-        int recordCountPerPage= 10;
+//        int recordCountPerPage= 10;
     public int getPostListCnt() {
         return postMapper.getPostListCnt();
     }
+
+//    게시글 조회수
+
+
+public PostVO incrementViews(Long id) {
+    postMapper.incrementViews(id);
+    return postMapper.selectPost(id);
+}
 
     // 게시글 생성
     @Transactional
@@ -195,4 +203,9 @@ public class PostService {
 
         return postList != null ? postList : new ArrayList<>();
     }
+
+    public int getCommentCountByPostId(Long postId) {
+        return commentMapper.getCommentCountByPostId(postId);
+    }
+
 }

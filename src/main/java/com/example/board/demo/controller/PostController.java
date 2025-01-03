@@ -7,6 +7,9 @@ import com.example.board.demo.mapper.PostMapper;
 import com.example.board.demo.service.MemberService;
 import com.example.board.demo.service.PostService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,17 +135,49 @@ public class PostController {
 
 //  게시글 상세
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
-    public ModelAndView gotoDetail(@RequestParam("id") Long id, Model model) {
+    public ModelAndView gotoDetail(@RequestParam("id") Long id, Model model, @RequestParam(defaultValue = "1") int pageIndex,
+                                   @RequestParam(defaultValue = "5") int pageUnit,  HttpServletRequest request,
+                                   HttpServletResponse response) {
         Long memberId = (Long) session.getAttribute("id");
         if (memberId == null) {
             return new ModelAndView("redirect:/login");
         }
 
+//        조회수
+        String cookieName = "viewedPost" + id;
+        Cookie[] cookies = request.getCookies();
+        boolean hasViewed = false;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(cookieName)) {
+                    hasViewed = true;
+                    break;
+                }
+            }
+        }
+        if (!hasViewed) {
+            postService.incrementViews(id);
+            Cookie viewCookie = new Cookie(cookieName, "true");
+            viewCookie.setMaxAge(60);
+            viewCookie.setPath("/");
+            response.addCookie(viewCookie);
+        }
+
         PostVO post = postService.getPostById(id);
+
         if (post == null) {
             model.addAttribute("errorMessage", "존재하지 않는 게시글입니다.");
             return new ModelAndView("error");
         }
+
+            int totalPostCount = postService.getPostListCnt();
+            Pagination pagination = initializePagination(pageIndex, pageUnit, 10, totalPostCount);
+            List<PostVO> postList = postMapper.selectPostList(pagination);
+
+            ModelAndView modelAndView = new ModelAndView("list");
+            modelAndView.addObject("postList", postList);
+            modelAndView.addObject("pagination", pagination);
 
         model.addAttribute("post", post);
         return new ModelAndView("postDetail");

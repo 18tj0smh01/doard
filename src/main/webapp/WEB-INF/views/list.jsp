@@ -29,14 +29,14 @@
     <div class="board-title">전체글</div>
     <div class="tool-wrapper">
         <div class="tool-box">
-            <button class="check tool-button" id="toggle-checkbox">
-                선택모드
-            </button>
-            <button class="check-all tool-button" id="select-all">전체 선택</button>
+<%--            <button class="check tool-button" id="toggle-checkbox">--%>
+<%--                선택모드--%>
+<%--            </button>--%>
+<%--            <button class="check-all tool-button" id="select-all">전체 선택</button>--%>
             <span class="right-tool">
               <button type="button" class="goWritePost write tool-button" data-id="${member.id}">작성</button>
 <%--              <a class="write tool-button" href="${pageContext.request.contextPath}/post/write">작성</a>--%>
-            <button type="button" class="deletePost delete tool-button" data-id="${post.id}">삭제</button>
+<%--            <button type="button" class="deletePost delete tool-button" data-id="${post.id}">삭제</button>--%>
           </span>
         </div>
     </div>
@@ -45,12 +45,12 @@
     <table class="main-box" id="post-table">
         <thead class="table-head">
         <tr>
-            <th class="table-left td-num">번호</th>
-            <th class="td-title">제목</th>
-            <th class="table-right td-member">작성자</th>
-            <th class="table-right td-date">작성일</th>
-            <th class="table-right td-view">조회</th>
-            <th class="table-right td-comment">댓글</th>
+            <th>번호</th>
+            <th >제목</th>
+            <th >작성자</th>
+            <th >작성일</th>
+            <th>조회</th>
+            <th>댓글</th>
         </tr>
         </thead>
         <tbody class="list-box" id="post-list">
@@ -101,7 +101,6 @@
         // 게시글 목록 로드
         function loadPostList() {
             console.log("loadPostList 호출:", submitObj);
-
             $.ajax({
                 url: "/post/list/json", // 서버에서 데이터 가져오는 엔드포인트
                 type: "GET",
@@ -122,16 +121,17 @@
         // 게시글 리스트
         function updatePostList(postList) {
             console.log("updatePostList 호출:", postList);
-
+            let maxTitleLength = 20;
+            let truncatedTitle = post.postTitle.length > maxTitleLength
             let content = '';
             postList.forEach(post => {
                 content += '<tr>';
-                content += '<td>' + post.id + '</td>';
-                content += '<td><a href="/post/detail?id=' + post.id + '">' + post.postTitle + '</a></td>';
-                content += '<td>' + post.memberName + '</td>';
-                content += '<td>' + post.postDate + '</td>';
-                content += '<td>' + post.viewCount + '</td>';
-                content += '<td>' + post.commentCount + '</td>';
+                content += '<td class="table-left">' + post.id + '</td>';
+                content += '<td class="td-title"><a href="/post/detail?id=' + post.id + '">' + post.postTitle + '</a></td>';
+                content += '<td class="table-right td-member">' + post.memberName + '</td>';
+                content += '<td class="table-right td-date">' + post.postDate + '</td>';
+                content += '<td class="table-right td-view">' + post.viewCount + '</td>';
+                content += '<td class="table-right td-comment">' + post.commentCount + '</td>';
                 content += '</tr>';
             });
 

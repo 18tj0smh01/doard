@@ -88,7 +88,12 @@
         WHERE p.ID = #{id}
     </select>
 
-
+    <!--조회수 증가-->
+    <update id="incrementViews" parameterType="long">
+        UPDATE POST
+        SET VIEWCOUNT = VIEWCOUNT + 1
+        WHERE ID = #{id}
+    </update>
 
     <!-- 글 수정 -->
     <update id="postEdit">

@@ -111,4 +111,11 @@
         from
             COMMENT
     </select>
+
+    <select id="getCommentCountByPostId" parameterType="long" resultType="int">
+        SELECT COUNT(*)
+        FROM COMMENT
+        WHERE POST_ID = #{postId}
+    </select>
+
 </mapper>

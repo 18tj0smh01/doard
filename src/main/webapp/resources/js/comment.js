@@ -19,9 +19,14 @@ $(document).ready(function () {
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ postId, commentContent }),
-            success: function () {
+            success: function (response) {
                 $("#commentContent").val("");
                 loadComments(postId);
+
+                // 댓글 수 즉시 업데이트
+                if (response.commentCount !== undefined) {
+                    updateCommentCount(response.commentCount);
+                }
             },
             error: function (xhr) {
                 alert("댓글 등록 중 오류가 발생했습니다.");
@@ -29,7 +34,6 @@ $(document).ready(function () {
             },
         });
     });
-
 
     // 댓글 목록 불러오기
     function loadComments(postId) {
@@ -52,11 +56,16 @@ $(document).ready(function () {
         });
     }
 
+    // 댓글 수 업데이트 함수
+    function updateCommentCount(newCount) {
+        const commentCountElement = $(".comment-count-box span");
+        commentCountElement.text(newCount); // 서버에서 반환된 새로운 댓글 수로 업데이트
+    }
+
     // 댓글 렌더링 함수
     function renderComment(comment) {
         let repliesHTML = "";
 
-        // 대댓글 렌더링
         if (comment.replies && comment.replies.length > 0) {
             comment.replies.forEach(function (reply) {
                 repliesHTML += renderReply(reply);
@@ -97,8 +106,8 @@ $(document).ready(function () {
                 </div>
                 <div class="reply-content">${reply.commentContent}</div>
                 <section class="order">
-                    <button  data-id="${reply.id}" class="edit editComment">수정</a>
-                    <button  data-id="${reply.id}" class="delete deleteComment">삭제</a>
+                    <button data-id="${reply.id}" class="edit editComment">수정</button>
+                    <button data-id="${reply.id}" class="delete deleteComment">삭제</button>
                 </section>
             </div>
         `;
@@ -155,7 +164,6 @@ $(document).ready(function () {
         });
     });
 
-
     // 답글 취소
     $(document).on("click", ".comment-cancel", function () {
         const replyBox = $(this).closest(".reply-box");
@@ -198,7 +206,7 @@ $(document).ready(function () {
             url: `/comment/edit/${commentId}`,
             type: "PUT",
             contentType: "application/json",
-            data: JSON.stringify({ commentContent: commentContent }),
+            data: JSON.stringify({ commentContent }),
             success: function () {
                 alert("댓글이 수정되었습니다.");
                 loadComments(postId);
@@ -206,7 +214,7 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 alert("댓글 수정에 실패했습니다.");
                 console.error(error);
-            }
+            },
         });
     });
 
