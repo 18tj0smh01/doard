@@ -3,6 +3,21 @@ $(document).ready(function () {
 
     if (postId) {
         loadComments(postId);
+        updateCommentCount();
+    }
+
+    // 댓글 수 업데이트
+    function updateCommentCount() {
+        $.ajax({
+            url: `/comment/count/${postId}`,
+            type: "GET",
+            success: function (commentCount) {
+                $(".comment-count-box span").text(commentCount);
+            },
+            error: function (xhr) {
+                console.error("댓글 수를 업데이트하는 중 오류 발생:", xhr.responseText);
+            },
+        });
     }
 
     // 댓글 작성
@@ -22,11 +37,7 @@ $(document).ready(function () {
             success: function (response) {
                 $("#commentContent").val("");
                 loadComments(postId);
-
-                // 댓글 수 즉시 업데이트
-                if (response.commentCount !== undefined) {
-                    updateCommentCount(response.commentCount);
-                }
+                updateCommentCount();
             },
             error: function (xhr) {
                 alert("댓글 등록 중 오류가 발생했습니다.");
@@ -56,19 +67,13 @@ $(document).ready(function () {
         });
     }
 
-    // 댓글 수 업데이트 함수
-    function updateCommentCount(newCount) {
-        const commentCountElement = $(".comment-count-box span");
-        commentCountElement.text(newCount); // 서버에서 반환된 새로운 댓글 수로 업데이트
-    }
-
     // 댓글 렌더링 함수
     function renderComment(comment) {
         let repliesHTML = "";
 
         if (comment.replies && comment.replies.length > 0) {
             comment.replies.forEach(function (reply) {
-                repliesHTML += renderReply(reply);
+                repliesHTML += renderComment(reply);
             });
         }
 
@@ -79,6 +84,7 @@ $(document).ready(function () {
                     <span class="comment-date">${comment.commentDate}</span>
                 </div>
                 <div class="comment-content">${comment.commentContent}</div>
+                <input type="hidden" class="comment-depth" value="${comment.commentDepth}">
                 <section class="order">
                     <a data-id="${comment.id}" class="edit editComment">수정</a>
                     <a data-id="${comment.id}" class="delete deleteComment">삭제</a>
@@ -89,7 +95,7 @@ $(document).ready(function () {
                     <button type="button" class="comment-cancel">취소</button>
                     <button type="submit" class="comment-submit">등록</button>
                 </div>
-                <div class="replies-container">
+                <div class="replies-container" style="margin-left: ${comment.commentDepth * 20}px;">
                     ${repliesHTML}
                 </div>
             </div>
@@ -105,10 +111,17 @@ $(document).ready(function () {
                     <span class="reply-date">${reply.commentDate}</span>
                 </div>
                 <div class="reply-content">${reply.commentContent}</div>
+                <input type="hidden" class="comment-depth" value="${comment.commentDepth}">
                 <section class="order">
                     <button data-id="${reply.id}" class="edit editComment">수정</button>
                     <button data-id="${reply.id}" class="delete deleteComment">삭제</button>
                 </section>
+                                <button type="button" class="reply-button">답글 쓰기</button>
+                <div class="reply-box" style="display: none;">
+                    <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요"></textarea>
+                    <button type="button" class="comment-cancel">취소</button>
+                    <button type="submit" class="comment-submit">등록</button>
+                </div>
             </div>
         `;
     }
@@ -124,6 +137,7 @@ $(document).ready(function () {
         const replyBox = $(this).closest(".reply-box");
         const replyContent = replyBox.find(".comment-input").val().trim();
         const parentCommentId = $(this).closest(".comment-info").data("comment-id");
+        const commentDepth = parseInt($(this).closest(".comment-info").find(".comment-depth").val()) + 1;
 
         if (!replyContent) {
             alert("답글 내용을 입력하세요.");
@@ -134,9 +148,10 @@ $(document).ready(function () {
             url: `/comment/writeReply`,
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ postId, parentCommentId, commentContent: replyContent }),
+            data: JSON.stringify({ postId, parentCommentId, commentContent: replyContent, commentDepth }),
             success: function () {
                 loadComments(postId);
+                updateCommentCount();
             },
             error: function (xhr) {
                 alert("답글 등록 중 오류가 발생했습니다.");
@@ -156,6 +171,7 @@ $(document).ready(function () {
             type: "DELETE",
             success: function () {
                 loadComments(postId);
+                updateCommentCount();
             },
             error: function (xhr) {
                 alert("댓글 삭제 중 오류가 발생했습니다.");

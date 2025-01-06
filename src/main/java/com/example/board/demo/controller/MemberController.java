@@ -4,16 +4,17 @@ import com.example.board.demo.domain.MemberVO;
 import com.example.board.demo.domain.PostVO;
 import com.example.board.demo.service.MemberService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -37,10 +38,9 @@ public class MemberController {
         final Optional<Long> foundMember = memberService.login(memberId, memberPassword);
 
         if (foundMember.isPresent()) {
-            // Cookie 생성
+            // 쿠키 생성
             Cookie cookie = new Cookie("id", String.valueOf(foundMember.get()));
             cookie.setPath("/");
-
             session.setAttribute("id", foundMember.get());
 
             return new RedirectView("/post/list");
@@ -58,6 +58,7 @@ public class MemberController {
 
     @PostMapping("/signUp")
     public RedirectView signUp(@RequestBody MemberVO memberVO, RedirectAttributes redirectAttributes) {
+
         try {
             memberService.signUp(memberVO);
             redirectAttributes.addFlashAttribute("signUpSuccess", true);
@@ -65,9 +66,46 @@ public class MemberController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("signUpFail", true);
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return new RedirectView("/signUp"); // 회원가입 페이지
+            return new RedirectView("/signUp");
         }
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session, HttpServletResponse response) {
+        // 세션 무효화
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // 쿠키 제거
+        Cookie cookie = new Cookie("id", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        
+        return ResponseEntity.ok("로그아웃");
+    }
+
+    @RequestMapping(value = "/checkId", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> checkId(@RequestParam("memberId") String memberId) {
+        boolean exists = memberService.findByMemberId(memberId);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("cnt", exists ? 1 : 0); // 존재하면 1, 없으면 0
+
+        return responseMap;
+    }
+
+    @RequestMapping(value = "/checkName", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> checkName(@RequestParam("memberName") String memberName) {
+        boolean exists = memberService.findByMemberName(memberName);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("cnt", exists ? 1 : 0); // 존재하면 1, 없으면 0
+
+        return responseMap;
+    }
 
 }

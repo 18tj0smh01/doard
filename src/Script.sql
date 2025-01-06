@@ -21,6 +21,7 @@ select * from tbl_member;
 
 drop table TBL_MEMBER;
 
+
 CREATE TABLE POST (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
     POST_TITLE VARCHAR(255) NOT NULL,
@@ -165,7 +166,17 @@ SELECT
     c.COMMENT_UPDATED_TIME
 FROM COMMENT c
 JOIN TBL_MEMBER m ON c.MEMBER_ID = m.ID
-WHERE c.POST_ID = 17;
+WHERE c.POST_ID = 41;
+
+SELECT *
+FROM COMMENT c
+JOIN TBL_MEMBER m ON c.MEMBER_ID = m.ID
+WHERE c.POST_ID = 41;
+
+SELECT *
+FROM comment
+WHERE post_id = 41
+ORDER BY comment_depth ASC, parent_comment_id ASC, id ASC;
 
 drop table comment;
 
@@ -198,5 +209,6 @@ INSERT INTO FILE
     (FILE_PATH, FILE_UUID, FILE_NAME, FILE_PURPOSE, FILE_SIZE, POST_ID, FILE_TYPE)
 VALUES 
     (#{filePath}, #{fileUuid}, #{fileName}, 'POST', #{fileSize}, #{postId}, #{fileType});
+
 
 

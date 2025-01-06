@@ -25,6 +25,13 @@ public class MemberService {
         return Optional.ofNullable(memberMapper.findById(id));
     }
 
+    public boolean findByMemberId(String memberId) {
+        return memberMapper.findByMemberId(memberId) > 0;
+    }
+    public boolean findByMemberName(String memberName) {
+        return memberMapper.findByMemberName(memberName) > 0;
+    }
+
     public Optional<Long> login(String memberId, String memberPassword) {
         return Optional.ofNullable(memberMapper.login(memberId, memberPassword));
     }
@@ -33,4 +40,6 @@ public class MemberService {
         memberMapper.signUp(memberVO);
         return memberVO;
     }
+//    public MemberVO getMemberId(Long id) {}
+
 }

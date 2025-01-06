@@ -137,7 +137,6 @@ a {
   color: #333;
 }
 
-/* Comment section */
 .comment-container {
   margin-top: 2rem;
   border-top: 1px solid #e0e0e0;
@@ -193,8 +192,7 @@ a {
 .comment-reply {
   margin-left: 2rem;
   padding: 1rem;
-  border-left: 3px solid #007bff;
-  background-color: #f0f8ff;
+  background-color: rgba(255, 255, 255, 0.81);
   border-radius: 5px;
   margin-top: 1rem;
 }

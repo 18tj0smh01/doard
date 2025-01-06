@@ -14,4 +14,9 @@ public interface MemberMapper {
     MemberVO findById(Long id);
 
     MemberVO signUp(MemberVO member);
+
+    int findByMemberId(String memberId);
+
+    int findByMemberName(String memberName);
+
 }

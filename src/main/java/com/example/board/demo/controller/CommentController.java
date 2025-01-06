@@ -1,6 +1,8 @@
 package com.example.board.demo.controller;
 
 import com.example.board.demo.domain.CommentVO;
+import com.example.board.demo.domain.Pagination;
+import com.example.board.demo.domain.PostVO;
 import com.example.board.demo.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -53,7 +55,7 @@ public class CommentController {
         }
 
         commentVO.setMemberId(loggedInMemberId);
-        postService.uploadReply(commentVO);
+        postService.replyUpload(commentVO);
         return new ResponseEntity<>(commentVO, HttpStatus.OK);
     }
 
@@ -119,4 +121,18 @@ public class CommentController {
         postService.editComment(comment);
         return new ResponseEntity<>("댓글이 수정되었습니다.", HttpStatus.OK);
     }
+
+    @GetMapping("/count/{postId}")
+    public ResponseEntity<Integer> getCommentCount(@PathVariable Long postId) {
+        int commentCount = postService.getCommentCountByPostId(postId);
+        System.out.println("댓글 수:"+commentCount);
+        return ResponseEntity.ok(commentCount);
+    }
+
+    @GetMapping("/list/json/{postId}")
+    public ResponseEntity<?> getCommentListJson(@PathVariable Long postId) {
+        List<CommentVO> comments = postService.selectPostComment(postId);
+        return ResponseEntity.ok(comments);
+    }
+
 }

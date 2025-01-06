@@ -100,7 +100,7 @@ public PostVO incrementViews(Long id) {
 
     // 대댓글 추가
     @Transactional
-    public CommentVO uploadReply(CommentVO commentVO) {
+    public CommentVO replyUpload(CommentVO commentVO) {
         int rowsAffected = commentMapper.replyUpload(commentVO); // 게시글 삽입
         if (rowsAffected == 0) {
             throw new RuntimeException("대댓글 생성 실패");
@@ -143,25 +143,52 @@ public PostVO incrementViews(Long id) {
 //    public List<CommentVO> selectPostComment(Long postId){
 //        return commentMapper.selectPostComment(postId);
 //    }
+
+//    public List<CommentVO> selectPostComment(Long postId) {
+//        // 댓글과 대댓글 모두 조회
+//        List<CommentVO> allComments = commentMapper.selectPostComment(postId);
+//
+//        // 댓글과 대댓글을 분리
+//        List<CommentVO> parentComments = new ArrayList<>();
+//        Map<Long, CommentVO> commentMap = new HashMap<>();
+//
+//        for (CommentVO comment : allComments) {
+//            if (comment.getCommentDepth() == 0) {
+//                // 댓글 (depth = 0)
+//                parentComments.add(comment);
+//                commentMap.put(comment.getId(), comment);
+//            } else {
+//                // 대댓글 (depth > 0)
+//                CommentVO parentComment = commentMap.get(comment.getParentCommentId());
+//                if (parentComment != null) {
+//                    parentComment.getReplies().add(comment);
+//                }
+//            }
+//        }
+//
+//        return parentComments;
+//    }
+
     public List<CommentVO> selectPostComment(Long postId) {
-        // 댓글과 대댓글 모두 조회
         List<CommentVO> allComments = commentMapper.selectPostComment(postId);
 
-        // 댓글과 대댓글을 분리
         List<CommentVO> parentComments = new ArrayList<>();
         Map<Long, CommentVO> commentMap = new HashMap<>();
 
         for (CommentVO comment : allComments) {
+            if (comment.getReplies() == null) {
+                comment.setReplies(new ArrayList<>());
+            }
+
             if (comment.getCommentDepth() == 0) {
-                // 댓글 (depth = 0)
                 parentComments.add(comment);
                 commentMap.put(comment.getId(), comment);
             } else {
-                // 대댓글 (depth > 0)
                 CommentVO parentComment = commentMap.get(comment.getParentCommentId());
                 if (parentComment != null) {
                     parentComment.getReplies().add(comment);
                 }
+                commentMap.put(comment.getId(), comment);
             }
         }
 

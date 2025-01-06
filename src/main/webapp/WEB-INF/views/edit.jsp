@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>write</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/write.css"/>
 </head>
 <body>
 <div class="header-box">

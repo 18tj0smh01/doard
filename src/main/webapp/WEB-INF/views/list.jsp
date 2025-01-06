@@ -37,6 +37,7 @@
               <button type="button" class="goWritePost write tool-button" data-id="${member.id}">작성</button>
 <%--              <a class="write tool-button" href="${pageContext.request.contextPath}/post/write">작성</a>--%>
 <%--            <button type="button" class="deletePost delete tool-button" data-id="${post.id}">삭제</button>--%>
+                <button type="button" id="logoutButton" class="btn btn-secondary">로그아웃</button>
           </span>
         </div>
     </div>
@@ -174,10 +175,23 @@
 
         // 초기 게시글 목록 로드
         loadPostList();
+
+        $("#logoutButton").click(function () {
+            $.ajax({
+                url: "/logout",
+                type: "GET",
+                success: function () {
+                    alert("로그아웃");
+                    window.location.href = "/login";
+                },
+                error: function (xhr, status, error) {
+                    alert("로그아웃 중 오류가 발생했습니다.");
+                    console.error("오류 발생:", error);
+                }
+            });
+        });
     });
 </script>
-
-<script src="${pageContext.request.contextPath}/resources/js/page.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
 </body>
 </html>

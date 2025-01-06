@@ -8,9 +8,13 @@
     </insert>
 
 <!--대댓글 작성-->
+<!--    <insert id="replyUpload">-->
+<!--        INSERT INTO COMMENT (COMMENT_CONTENT, COMMENT_DEPTH, PARENT_COMMENT_ID, POST_ID, MEMBER_ID)-->
+<!--        VALUES (#{commentContent}, 1, #{parentCommentId}, #{postId}, #{memberId})-->
+<!--    </insert>-->
     <insert id="replyUpload">
         INSERT INTO COMMENT (COMMENT_CONTENT, COMMENT_DEPTH, PARENT_COMMENT_ID, POST_ID, MEMBER_ID)
-        VALUES (#{commentContent}, 1, #{parentCommentId}, #{postId}, #{memberId})
+        VALUES (#{commentContent}, #{commentDepth}, #{parentCommentId}, #{postId}, #{memberId})
     </insert>
 <!--댓 or 대댓글 삭제-->
     <delete id="deleteComment">
