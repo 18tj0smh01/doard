@@ -34,3 +34,13 @@
         https://sap518.tistory.com/160
         https://ttl-blog.tistory.com/267
         https://earth-95.tistory.com/49
+
+.
+    
+    파일 입출력
+        https://velog.io/@ayeonnam93/%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C-%EB%B0%A9%EC%8B%9D-Ajax%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EB%8A%94-%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C
+
+        form 방식 (input)
+        
+        AJAX 방식
+    

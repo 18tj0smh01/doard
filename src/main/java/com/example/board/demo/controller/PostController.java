@@ -99,15 +99,16 @@ public class PostController {
 //    }
 
 //    게시글 작성
-    @GetMapping("/write")
-    public ModelAndView gotoWrite(Model model) {
-        Long memberId = (Long) session.getAttribute("id");
-        if (memberId == null) {
-            return new ModelAndView("redirect:/login");
-        }
-        model.addAttribute("postVO", new PostVO());
-        return new ModelAndView("write");
+@GetMapping("/write")
+public ModelAndView gotoWrite(HttpSession session, Model model) {
+    Long memberId = (Long) session.getAttribute("id");
+    if (memberId == null) {
+        return new ModelAndView("redirect:/login");
     }
+    model.addAttribute("postVO", new PostVO());
+    return new ModelAndView("write");
+}
+
 
     @PostMapping("/write")
     public ResponseEntity<String> write(@RequestBody PostVO postVO) {

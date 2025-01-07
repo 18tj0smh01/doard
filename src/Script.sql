@@ -204,11 +204,20 @@ drop table FILE;
 SELECT ID, FILE_PATH, FILE_UUID, FILE_NAME, FILE_PURPOSE, FILE_SIZE, POST_ID, FILE_TYPE
 FROM FILE WHERE POST_ID = 1;
 
+-- 댓글 파일 조회
+SELECT ID, FILE_PATH, FILE_UUID, FILE_NAME, FILE_PURPOSE, FILE_SIZE, POST_ID, FILE_TYPE
+FROM FILE WHERE COMMENT_ID = 1;
+
 -- 게시글 이미지 삽입
 INSERT INTO FILE 
     (FILE_PATH, FILE_UUID, FILE_NAME, FILE_PURPOSE, FILE_SIZE, POST_ID, FILE_TYPE)
 VALUES 
     (#{filePath}, #{fileUuid}, #{fileName}, 'POST', #{fileSize}, #{postId}, #{fileType});
 
+-- 댓글 이미지 삽입
+INSERT INTO FILE 
+    (FILE_PATH, FILE_UUID, FILE_NAME, FILE_PURPOSE, FILE_SIZE, COMMENT_ID, FILE_TYPE)
+VALUES 
+    (#{filePath}, #{fileUuid}, #{fileName}, 'COMMENT', #{fileSize}, #{commentId}, #{fileType});
 
 
