@@ -196,6 +196,8 @@ CREATE TABLE FILE (
     FOREIGN KEY (MEMBER_ID) REFERENCES TBL_MEMBER(ID) ON DELETE CASCADE
 );
 
+select * from FILE;
+
 drop table FILE;
 
 -- 매퍼테스트

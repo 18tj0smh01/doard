@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private static final String UPLOAD_DIR = "/uploads/";
+    private static final String UPLOAD_DIR = "/img/";
 
     public String saveFile(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
