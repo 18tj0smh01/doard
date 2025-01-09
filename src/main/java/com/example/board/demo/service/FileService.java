@@ -13,18 +13,18 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private static final String UPLOAD_DIR = "/img/";
+    private static final String UPLOAD_DIR = "src/main/webapp/resources/img/";
 
     public String saveFile(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
+
         Path filePath = Paths.get(UPLOAD_DIR, uniqueFilename);
 
         Files.createDirectories(filePath.getParent());
 
-
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return filePath.toString();
+        return "/resources/img/" + uniqueFilename;
     }
 }

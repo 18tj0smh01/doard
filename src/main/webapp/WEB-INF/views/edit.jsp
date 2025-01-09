@@ -49,14 +49,15 @@
         <textarea
                 id="postContent"
                 class="content-area">${post.postContent != null ? post.postContent : ''}</textarea>
-        <button id="uploadImg">이미지 업로드</button>
-        <input type="file" id="imgInput" style="display: none;" />
+        <button type="button" class="uploadImg">이미지 업로드</button>
+        <input type="file" class="imgInput" style="display: none" />
     </div>
     <button type="button" class="save-edit-post" data-id="${post.id}">등록</button>
 </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/file.js"></script>
 <%--<script>--%>
 <%--    $("button.ok-button").on("click", function () {--%>
 <%--        $("form[name='form']").submit();--%>

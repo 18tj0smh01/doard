@@ -1,13 +1,14 @@
 $(document).ready(function () {
-    // 이미지 버튼 클릭 이벤트
-    $("#uploadImg").click(function () {
-        $("#imgInput").click();
+    $(document).on("click", ".uploadImg", function () {
+        $(this).closest(".comment-box, .post-box").find(".imgInput").click();
     });
 
     // 파일 업로드
-    $("#imgInput").change(function () {
+    $(document).on("change", ".imgInput", function () {
         const file = this.files[0];
-        if (file) {
+        const targetTextarea = $(this).closest(".comment-box, .post-box").find("textarea");
+
+        if (file && targetTextarea.length) {
             const formData = new FormData();
             formData.append("file", file);
 
@@ -21,27 +22,24 @@ $(document).ready(function () {
                     if (response.filePath) {
                         const imgUrl = response.filePath;
                         console.log("img:" + imgUrl);
-                        insertImgToEditor(imgUrl);
-                        $("#imgInput").val("");
+                        insertImgToEditor(targetTextarea, imgUrl);
                     } else {
-                        console.error("파일 업로드 응답에 URL이 없습니다.");
+                        console.error("오류");
                     }
                 },
                 error: function (xhr, status, error) {
                     alert("이미지 업로드 실패: " + error);
-                    $("#imgInput").val("");
                 }
             });
         }
     });
 
-    // 본문에 삽입 함수
-    function insertImgToEditor(imgUrl) {
+    // 이미지 삽입 함수
+    function insertImgToEditor(targetTextarea, imgUrl) {
         console.log("본문 삽입 img:" + imgUrl);
-        const textarea = $("#postContent");
-        const cursorPosition = textarea.prop("selectionStart");
-        const textBefore = textarea.val().substring(0, cursorPosition);
-        const textAfter = textarea.val().substring(cursorPosition);
-        textarea.val(textBefore + `\n<img src="${imgUrl}" alt="이미지" />\n` + textAfter);
+        const cursorPosition = targetTextarea.prop("selectionStart");
+        const textBefore = targetTextarea.val().substring(0, cursorPosition);
+        const textAfter = targetTextarea.val().substring(cursorPosition);
+        targetTextarea.val(textBefore + `\n<img src="${imgUrl}" alt="이미지" />\n` + textAfter);
     }
 });

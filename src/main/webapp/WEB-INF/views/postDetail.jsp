@@ -74,6 +74,8 @@
             <div class="comment-box">
                 <div class="comment-user">${memberName}</div>
                 <textarea id="commentContent" class="comment-input" placeholder="댓글을 입력하세요"></textarea>
+                <button type="button" class="uploadImg">이미지 업로드</button>
+                <input type="file" class="imgInput" style="display: none" />
                 <div class="comment-footer">
                     <button id="commentSubmit" class="comment-submit" data-post-id="${post.id}">등록</button>
                 </div>
@@ -107,6 +109,7 @@
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/file.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/comment.js"></script>
 <script>
     let submitObj = {

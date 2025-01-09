@@ -32,8 +32,8 @@
                 name="postContent"
                 class="content-area"
                 placeholder="내용을 입력해 주세요.">${postVO.postContent != null ? postVO.postContent : ''}</textarea>
-        <button id="uploadImg">이미지 업로드</button>
-        <input type="file" id="imgInput" style="display: none;" />
+        <button type="button" class="uploadImg">이미지 업로드</button>
+        <input type="file" class="imgInput" style="display: none" />
     </div>
     <button type="button" class="writePost">등록</button>
 </div>

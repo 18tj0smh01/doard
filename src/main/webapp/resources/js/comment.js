@@ -119,6 +119,8 @@ $(document).ready(function () {
                                 <button type="button" class="reply-button">답글 쓰기</button>
                 <div class="reply-box" style="display: none;">
                     <textarea name="reply" class="comment-input" placeholder="답글을 입력하세요"></textarea>
+                    <button id="uploadImg">이미지 업로드</button>
+                    <input type="file" id="imgInput" style="display: none;" />
                     <button type="button" class="comment-cancel">취소</button>
                     <button type="submit" class="comment-submit">등록</button>
                 </div>

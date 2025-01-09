@@ -193,5 +193,6 @@
     });
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/file.js"></script>
 </body>
 </html>
