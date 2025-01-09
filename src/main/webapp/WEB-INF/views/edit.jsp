@@ -49,8 +49,8 @@
         <textarea
                 id="postContent"
                 class="content-area">${post.postContent != null ? post.postContent : ''}</textarea>
-        <button id="uploadImage">이미지 업로드</button>
-        <input type="file" id="imageInput" style="display: none;" />
+        <button id="uploadImg">이미지 업로드</button>
+        <input type="file" id="imgInput" style="display: none;" />
     </div>
     <button type="button" class="save-edit-post" data-id="${post.id}">등록</button>
 </div>

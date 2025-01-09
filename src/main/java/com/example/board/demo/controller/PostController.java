@@ -139,12 +139,13 @@ public ModelAndView gotoWrite(HttpSession session, Model model) {
     public ModelAndView gotoDetail(@RequestParam("id") Long id, Model model, @RequestParam(defaultValue = "1") int pageIndex,
                                    @RequestParam(defaultValue = "5") int pageUnit,  HttpServletRequest request,
                                    HttpServletResponse response) {
+
         Long memberId = (Long) session.getAttribute("id");
         if (memberId == null) {
             return new ModelAndView("redirect:/login");
         }
 
-//        조회수
+        //조회수
         String cookieName = "viewedPost" + id;
         Cookie[] cookies = request.getCookies();
         boolean hasViewed = false;

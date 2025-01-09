@@ -32,8 +32,8 @@
                 name="postContent"
                 class="content-area"
                 placeholder="내용을 입력해 주세요.">${postVO.postContent != null ? postVO.postContent : ''}</textarea>
-        <button id="uploadImage">이미지 업로드</button>
-        <input type="file" id="imageInput" style="display: none;" />
+        <button id="uploadImg">이미지 업로드</button>
+        <input type="file" id="imgInput" style="display: none;" />
     </div>
     <button type="button" class="writePost">등록</button>
 </div>
@@ -60,4 +60,5 @@
 </body>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/postRE.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/file.js"></script>
 </html>
