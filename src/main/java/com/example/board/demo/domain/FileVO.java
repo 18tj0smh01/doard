@@ -2,6 +2,7 @@ package com.example.board.demo.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,15 +14,34 @@ import org.springframework.stereotype.Component;
 @Component
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FileVO {
+    @JsonProperty("id")
     private Long id;
+
+    @JsonProperty("filePath")
     private String filePath;       // 파일 경로
+
+    @JsonProperty("fileUuid")
     private String fileUuid;       // 파일 UUID
+
+    @JsonProperty("fileName")
     private String fileName;       // 파일 이름
+
+    @JsonProperty("fileType")
     private String fileType;       // 확장자
+
+    @JsonProperty("fileSize")
     private Long fileSize;         // 파일 크기
+
+    @JsonProperty("filePurpose")
     private String filePurpose;    // 용도 ('POST', 'COMMENT', 'MEMBER')
+
+    @JsonProperty("postId")
     private Long postId;           // 게시글 ID
+
+    @JsonProperty("commentId")
     private Long commentId;        // 댓글 ID
+
+    @JsonProperty("memberId")
     private Long memberId;         // 회원 ID
 
     public FileVO() {
