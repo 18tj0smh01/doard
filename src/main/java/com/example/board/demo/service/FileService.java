@@ -16,15 +16,13 @@ public class FileService {
     private static final String UPLOAD_DIR = "/uploads/";
 
     public String saveFile(MultipartFile file) throws IOException {
-        // 파일 저장 경로 생성
         String originalFilename = file.getOriginalFilename();
         String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
         Path filePath = Paths.get(UPLOAD_DIR, uniqueFilename);
 
-        // 디렉토리가 없는 경우 생성
         Files.createDirectories(filePath.getParent());
 
-        // 파일 저장
+
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return filePath.toString();

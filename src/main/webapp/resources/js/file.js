@@ -22,12 +22,14 @@ $(document).ready(function () {
                         const imgUrl = response.filePath;
                         console.log("img:" + imgUrl);
                         insertImgToEditor(imgUrl);
+                        $("#imgInput").val("");
                     } else {
                         console.error("파일 업로드 응답에 URL이 없습니다.");
                     }
                 },
                 error: function (xhr, status, error) {
                     alert("이미지 업로드 실패: " + error);
+                    $("#imgInput").val("");
                 }
             });
         }
