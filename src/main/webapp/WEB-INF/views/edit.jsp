@@ -45,13 +45,12 @@
                 class="title-area"
                 value="${post.postTitle != null ? post.postTitle : ''}" />
     </div>
-    <div class="file-input">
-        <input type="file" name="file" class="file-upload" />
-    </div>
     <div class="content-box">
         <textarea
                 id="postContent"
                 class="content-area">${post.postContent != null ? post.postContent : ''}</textarea>
+        <button id="uploadImage">이미지 업로드</button>
+        <input type="file" id="imageInput" style="display: none;" />
     </div>
     <button type="button" class="save-edit-post" data-id="${post.id}">등록</button>
 </div>

@@ -26,15 +26,14 @@
                 placeholder="제목을 입력해 주세요."
                 value="${postVO.postTitle != null ? postVO.postTitle : ''}" />
     </div>
-    <div class="file-input">
-        <input type="file" name="file" class="file-upload" />
-    </div>
     <div class="content-box">
         <textarea
                 id="postContent"
                 name="postContent"
                 class="content-area"
                 placeholder="내용을 입력해 주세요.">${postVO.postContent != null ? postVO.postContent : ''}</textarea>
+        <button id="uploadImage">이미지 업로드</button>
+        <input type="file" id="imageInput" style="display: none;" />
     </div>
     <button type="button" class="writePost">등록</button>
 </div>

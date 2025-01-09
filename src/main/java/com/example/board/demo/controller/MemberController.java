@@ -4,6 +4,7 @@ import com.example.board.demo.domain.MemberVO;
 import com.example.board.demo.domain.PostVO;
 import com.example.board.demo.service.MemberService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public RedirectView login(String memberId, String memberPassword, HttpSession session, RedirectAttributes redirectAttributes) {
+    public RedirectView login(String memberId, String memberPassword, HttpSession session, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         final Optional<Long> foundMember = memberService.login(memberId, memberPassword);
 
         if (foundMember.isPresent()) {
@@ -42,6 +43,8 @@ public class MemberController {
             Cookie cookie = new Cookie("id", String.valueOf(foundMember.get()));
             cookie.setPath("/");
             session.setAttribute("id", foundMember.get());
+            response.addCookie(cookie);
+            System.out.println("id:"+foundMember.get());
 
             return new RedirectView("/post/list");
         }
@@ -71,18 +74,23 @@ public class MemberController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session, HttpServletResponse response) {
+    public ResponseEntity<String> logout(HttpSession session, HttpServletResponse response,  HttpServletRequest request) {
         // 세션 무효화
         if (session != null) {
             session.invalidate();
         }
 
         // 쿠키 제거
-        Cookie cookie = new Cookie("id", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setValue(null);
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+        }
+
         return ResponseEntity.ok("로그아웃");
     }
 
@@ -92,7 +100,7 @@ public class MemberController {
         boolean exists = memberService.findByMemberId(memberId);
 
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("cnt", exists ? 1 : 0); // 존재하면 1, 없으면 0
+        responseMap.put("cnt", exists ? 1 : 0);
 
         return responseMap;
     }
@@ -103,7 +111,7 @@ public class MemberController {
         boolean exists = memberService.findByMemberName(memberName);
 
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("cnt", exists ? 1 : 0); // 존재하면 1, 없으면 0
+        responseMap.put("cnt", exists ? 1 : 0);
 
         return responseMap;
     }
